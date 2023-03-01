@@ -1,0 +1,57 @@
+### CODE ### CODE ### CODE ### CODE ### CODE ### CODE ### CODE ### CODE ### CODE ### CODE ### CODE ### CODE ###
+
+## All genomes repositories NCBI : 
+https://ftp.ncbi.nih.gov/genomes/
+
+## First download the assembly_summary.txt file
+wget ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/assembly_summary.txt
+
+## Voir tous les fichiers assembly de la sous-espèce "Bifidobacterium longum subsp. longum" :
+cat assembly_summary.txt | awk 'BEGIN{FS="\t";OFS="\t"} ($8~/Bifidobacterium longum subsp. longum/ && $11=="latest" && $12=="Complete Genome") {print $8 " --> " $20}' | sed -r 's/(GC[AF]_[0-9.]*_.*$)/\1\/\1_genomic.fna.gz/g'
+
+## Voir tous les fichiers de la souche "Bifidobacterium longum subsp. longum JCM 1217" : 
+cat assembly_summary.txt | awk 'BEGIN{FS="\t";OFS="\t"} ($9~/JCM 1217/) {print $8 " : " $9 " --> " $20}' | sed -r 's/(GC[AF]_[0-9.]*_.*$)/\1\/\1_genomic.fna.gz/g'
+
+## Voir tous les fichiers de la souche "Bifidobacterium longum subsp. longum JCM 31944" :
+cat assembly_summary.txt | awk 'BEGIN{FS="\t";OFS="\t"} ($8~/Bifidobacterium longum subsp. longum/ && $9~/strain=105-A/) {print $8 " : " $9 " --> " $20}' | sed -r 's/(GC[AF]_[0-9.]*_.*$)/\1\/\1_genomic.fna.gz/g'
+
+## Télécharger génomes de bactéries d'intérêt puis placer les génomes dans un répertoire au nom de l'espèce d'intérêt : 
+conda activate ncbi-genome-download-0.3.0
+ncbi-genome-download
+
+ou à partir du lien uri obtenu avant : 
+wget "https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/196/555/GCF_000196555.1_ASM19655v1/GCF_000196555.1_ASM19655v1_genomic.fna.gz" #B.longum 1217
+wget "https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/829/295/GCF_000829295.1_ASM82929v1/GCF_000829295.1_ASM82929v1_genomic.fna.gz" #B.longum 31944
+
+# Décompresser les fichiers :
+gzip -d GCF_000196555.1_ASM19655v1_genomic.fna.gz
+
+# Compter le nombre de nucléotides dans chaque génome :
+awk 'NR>1{ s += length($0) } END { print s }' GCF_000196555.1_ASM19655v1_genomic.fna
+awk 'NR>1{ s += length($0) } END { print s }' GCF_000829295.1_ASM82929v1_genomic.fna
+
+## 2385164 nucléotides pour B.longum 1217
+## 2290145 nucléotides pour B.longum 31944
+
+### Pour plus d'informations, voir : https://github.com/kblin/ncbi-genome-download. 
+
+## Constituer la base de données à partir du fichier FASTA de B.longum 1217 :
+conda activate blast-2.13.0
+makeblastdb -in GCF_000196555.1_ASM19655v1_genomic.fna -out B_longum_1217 -parse_seqids -dbtype nucl
+
+### Pour plus d'informations, voir : https://ncbi.github.io/magicblast/cook/blastdb.html. 
+
+## Se placer dans le répertoire où se trouvent la base de données précédemment générée !
+
+## Réaliser le BLAST entre le fichier FASTA de la bactérie d'intérêt (B.longum 31944) et la base de données précédemment constituées : 
+blastn -db B_longum_1217 -query ../B_longum_31944/GCF_000829295.1_ASM82929v1_genomic.fna -out nomatching_Blongum.txt -outfmt 2
+
+### Pour plus d'informations, voir : https://github.com/edamame-course/BLAST-tutorial/blob/master/running-BLAST.md.
+
+## Lancer le script "unique_seq.py" pour extraire les portions de génome unique :
+./unique_seq.py 
+
+## Lire le fichier unique_sequences.txt avec des sauts de lignes entre chaque portion de génome unique :
+awk '$1 ~ /^Query_/ && NR>1 && $2-1 != prev_end {printf "\n\n"} {prev_end=$4; print}' unique_sequences.txt > unique_sequences_Blongum_105A.txt
+
+### CODE ### CODE ### CODE ### CODE ### CODE ### CODE ### CODE ### CODE ### CODE ### CODE ### CODE ### CODE ###
