@@ -21,7 +21,7 @@ for line in tqdm(lines, desc="Downloading genomes", colour="magenta"):
     organism, strain, _, gca, _, gca_url, gcf, _, gcf_url = line.strip().split(", ")
 
     # Créer un répertoire pour stocker le génome
-    directory = f"{organism.replace(' ', '_')}_{strain.replace(' ', '_')}"
+    directory = f"{organism.replace(' ', '_').replace('.', '')}_{strain.replace(' ', '_').replace('.', '')}"
     os.makedirs(directory, exist_ok=True)
 
     # Télécharger le génome GCF s'il est disponible, sinon télécharger le génome GCA
