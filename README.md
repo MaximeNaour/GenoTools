@@ -2,12 +2,12 @@
 
 ```mermaid
 graph TD;
-    A[Identification du génome d'intérêt/bactérie <br> script :<br>"strain2ref.py"] --> B[Téléchargement du génome à partir de RefSeq ou Assembly <br> script :<br>"dl_genomes.py"];
-    B --> C[Identification des gènes à l'aide de Prokka];
-    C --> D[Annotation des gènes avec UniProtKB ou KEGG];
-    D --> E[Analyse des voies métaboliques avec Pathway Tools];
-    E --> F[Vérification manuelle de l'annotation avec Artemis];
-    F --> G[Stockage de l'annotation dans une base de données comme GenBank];
+    A[Identification of genome of interest per bacteria<br>script: "strain2ref.py"] --> B[Downloading genome from RefSeq or Assembly<br>script: "dl_genomes.py"];
+    B --> C[Gene identification using Prokka];
+    C --> D[Gene annotation with UniProtKB or KEGG];
+    D --> E[Metabolic pathway analysis with Pathway Tools];
+    E --> F[Manual annotation verification with Artemis];
+    F --> G[Storing annotation in a database like GenBank];
 ```
 
 The "unique_seq.py" script allows comparing two or more genomes to identify unique portions in the genome of the organism of interest in comparison to the genomes of other organisms.
