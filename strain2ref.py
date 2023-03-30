@@ -28,7 +28,7 @@ def get_most_recent_refseq_version(refseq_versions):
     return most_recent_version
 ###
 
-def get_gca_url_and taxonomy(organism, strain):
+def get_gca_url_and_taxonomy(organism, strain):
     query = f'"{organism}"[Organism] AND "{strain}"[All Fields] AND latest[filter]'
     esearch = subprocess.Popen(['esearch', '-db', 'assembly', '-query', query], stdout=subprocess.PIPE)
     esummary = subprocess.Popen(['esummary'], stdin=esearch.stdout, stdout=subprocess.PIPE)
@@ -91,7 +91,7 @@ with open(input_file, 'r') as infile, open(output_file, 'w') as outfile:
     organism_strain_pairs = infile.read().splitlines()
     for organism_strain in tqdm(organism_strain_pairs, desc="Processing organism and strain names", ncols=100, colour='magenta'):
         organism, strain = organism_strain.split(', ')
-        gca_id, gca_assembly_version, gca_url, taxonomy_id = get_gca_url_and taxonomy(organism, strain)
+        gca_id, gca_assembly_version, gca_url, taxonomy_id = get_gca_url_and_taxonomy(organism, strain)
         gcf_id, gcf_assembly_version, gcf_url = get_gcf_url(organism, strain)
         outfile.write(f"{organism}, {strain}, {taxonomy_id}, {gca_id}, {gca_assembly_version}, {gca_url}, {gcf_id}, {gcf_assembly_version}, {gcf_url}\n")
 
