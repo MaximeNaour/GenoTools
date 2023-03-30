@@ -2,7 +2,7 @@
 
 ```mermaid
 graph TD;
-    A[Identification du génome d'intérêt] --> B[Téléchargement du génome à partir de RefSeq ou Assembly];
+    A[Identification du génome d'intérêt/bactérie <br> script :<br>"strain2ref.py"] --> B[Téléchargement du génome à partir de RefSeq ou Assembly <br> script :<br>"dl_genomes.py"];
     B --> C[Identification des gènes à l'aide de Prokka];
     C --> D[Annotation des gènes avec UniProtKB ou KEGG];
     D --> E[Analyse des voies métaboliques avec Pathway Tools];
