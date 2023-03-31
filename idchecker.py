@@ -37,12 +37,18 @@ def search_ncbi(species, strain_info):
         print(f"Error: {e}")
         return None
 
+def split_species_strain(ncbi_name):
+    split_name = ncbi_name.split()
+    species = split_name[0] + ' ' + split_name[1]
+    strain = ' '.join(split_name[2:])
+    return species, strain
+
 def update_bacteria_names(input_file, output_file):
     with open(input_file, "r") as input_csv, open(output_file, "w", newline='') as output_csv:
         reader = csv.reader(input_csv, delimiter=' ')
         
         writer = csv.writer(output_csv, delimiter=',')
-        writer.writerow(['Species', 'Strain Info', 'NCBI Name'])
+        writer.writerow(['Specie', 'Strain'])
 
         for row in reader:
             species = row[0] + ' ' + row[1]
@@ -51,9 +57,10 @@ def update_bacteria_names(input_file, output_file):
             ncbi_name = search_ncbi(species, strain_info)
 
             if ncbi_name:
-                writer.writerow([species, strain_info, ncbi_name])
+                species, strain = split_species_strain(ncbi_name)
+                writer.writerow([species, strain])
             else:
-                writer.writerow([species, strain_info, 'Not found'])
+                writer.writerow([species, strain_info])
 
 input_file = input('Path (if different from the location of the script) and file name containing the organism and strain names: ')
 output_file = input('Path (if different from the location of the script) and file name to save the correction of organism and strain names: ')
