@@ -12,6 +12,7 @@ Created on 31/03/2023
 
 import csv
 import os
+from time import sleep
 from tkinter import *
 from tkinter import filedialog
 from tkinter import ttk, messagebox
@@ -49,7 +50,7 @@ def split_species_strain(ncbi_name):
     strain = ' '.join(split_name[2:])
     return species, strain
 
-def update_bacteria_names(input_file, output_file, progress_window):
+def update_bacteria_names(input_file, output_file, progress_window, current_line_label):
     with open(input_file, "r") as input_csv, open(output_file, "w", newline='') as output_csv:
         reader = csv.reader(input_csv, delimiter=' ')
         writer = csv.writer(output_csv, delimiter=',')
@@ -59,10 +60,11 @@ def update_bacteria_names(input_file, output_file, progress_window):
         input_csv.seek(0)
 
         progress_var = DoubleVar()
-        progress_bar = ttk.Progressbar(progress_window, variable=progress_var, length=200, mode='determinate')
+        progress_bar = ttk.Progressbar(progress_window, variable=progress_var, length=300, mode='determinate')
         progress_bar.pack(padx=10, pady=10)
 
         for i, row in enumerate(reader):
+            current_line_label.config(text=f"Processing: {' '.join(row)}")
             species = row[0] + ' ' + row[1]
             strain_info = ' '.join(row[2:])
 
@@ -76,6 +78,7 @@ def update_bacteria_names(input_file, output_file, progress_window):
 
             progress_var.set(i / num_rows * 100)
             progress_window.update()
+            sleep(0.01)
 
         progress_window.destroy()
 
@@ -95,13 +98,16 @@ def run_program():
     if output_file_path:
         progress_window = Toplevel(root)
         progress_window.title("Processing...")
-        progress_window.geometry("250x100")
+        progress_window.geometry("400x150")
         progress_window.resizable(False, False)
 
         progress_label = Label(progress_window, text="Processing...")
         progress_label.pack(padx=10, pady=10)
 
-        update_bacteria_names(input_file, output_file_path, progress_window)
+        current_line_label = Label(progress_window, text="")
+        current_line_label.pack(padx=10, pady=10)
+
+        update_bacteria_names(input_file, output_file_path, progress_window, current_line_label)
         messagebox.showinfo("Success","Processing completed successfully")
 
 # GUI part
