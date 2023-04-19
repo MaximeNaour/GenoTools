@@ -19,6 +19,8 @@ from tqdm import tqdm
 input_file = input('Path (if different from the location of the script) and file name containing the organism and strain names: ')
 output_file = input('Path (if different from the location of the script) and file name to save the corresponding GenBank assembly accession URLs and RefSeq assembly accession URLs: ')
 
+header_input = input('Is there a header in the input file? (yes/no): ').lower()
+
 ### Unused in this script !
 def get_most_recent_refseq_version(refseq_versions):
     refseq_versions_list = refseq_versions.split(';')
@@ -37,7 +39,7 @@ def get_gca_url_and_taxonomy(organism, strain):
 
     if not ftp_paths:
         print(f"WARNING: No GenBank assembly accession URL found for {organism}, {strain}")
-        return 'NA', 'NA', 'NA'
+        return 'NA', 'NA', 'NA', 'NA'
 
     gca_urls = []
     for ftp_path in ftp_paths:
@@ -69,7 +71,7 @@ def get_gcf_url(organism, strain):
 
     if not ftp_paths:
         print(f"WARNING: No RefSeq assembly accession URL found for {organism}, {strain}")
-        return 'NA', 'NA', 'NA'ls 
+        return 'NA', 'NA', 'NA'
 
     gcf_urls = []
     for ftp_path in ftp_paths:
@@ -89,8 +91,21 @@ def get_gcf_url(organism, strain):
 
 with open(input_file, 'r') as infile, open(output_file, 'w') as outfile:
     organism_strain_pairs = infile.read().splitlines()
+
+    # Add these lines to skip the header if the user answers "yes"
+    if header_input == 'yes':
+        organism_strain_pairs.pop(0)
+
     for organism_strain in tqdm(organism_strain_pairs, desc="Processing organism and strain names", ncols=100, colour='magenta'):
-        organism, strain = organism_strain.split(', ')
+        # Utilisez une expression régulière pour diviser la chaîne avec ou sans espace après la virgule
+        organism_strain_split = re.split(r',\s?', organism_strain)
+    
+        # Vérifiez si la chaîne a été correctement divisée en deux éléments
+        if len(organism_strain_split) != 2:
+            print(f"WARNING: Invalid format for line '{organism_strain}', skipping.")
+            continue
+    
+        organism, strain = organism_strain_split
         gca_id, gca_assembly_version, gca_url, taxonomy_id = get_gca_url_and_taxonomy(organism, strain)
         gcf_id, gcf_assembly_version, gcf_url = get_gcf_url(organism, strain)
         outfile.write(f"{organism}, {strain}, {taxonomy_id}, {gca_id}, {gca_assembly_version}, {gca_url}, {gcf_id}, {gcf_assembly_version}, {gcf_url}\n")
