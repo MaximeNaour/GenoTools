@@ -9,8 +9,8 @@ classDef exClass font-style:bold;
 classDef exClass font-size:16px;
 
 A("<font size=3>Identify genome/stain<br>script: strain2ref.py") --> B("<font size=3>Download genome from RefSeq/Assembly<br>script: dl_genomes.py");
-B --> C("<font size=3>Gene identification (Prokka)");
-C --> D("<font size=3>Gene annotation (UniProtKB/KEGG)");
+B --> C("<font size=3>Gene prediction (Prodigal)");
+C --> D("<font size=3>Gene annotation (UniProtKB/KEGG/Prokka/SEED/MetaCyc)");
 D --> E("<font size=3>Pathway analysis (Pathway Tools)");
 E --> F("<font size=3>Manual verification (Artemis)");
 F --> G("<font size=3>Store annotation (GenBank)");
