@@ -31,7 +31,7 @@ def get_most_recent_refseq_version(refseq_versions):
 ###
 
 def get_gca_url_and_taxonomy(organism, strain):
-    query = f'"{organism}"[Organism] AND "{strain}"[All Fields] AND latest[filter]'
+    query = f'"{organism}"[Organism] AND "{strain}"[All Fields] AND latest[filter]' if strain else f'"{organism}"[Organism] AND latest[filter]'
     esearch = subprocess.Popen(['esearch', '-db', 'assembly', '-query', query], stdout=subprocess.PIPE)
     esummary = subprocess.Popen(['esummary'], stdin=esearch.stdout, stdout=subprocess.PIPE)
     xtract = subprocess.Popen(['xtract', '-pattern', 'DocumentSummary', '-element', 'FtpPath_GenBank'], stdin=esummary.stdout, stdout=subprocess.PIPE)
@@ -63,7 +63,7 @@ def get_gca_url_and_taxonomy(organism, strain):
     return gca_id, gca_assembly_version, latest_gca_url, taxonomy_id
 
 def get_gcf_url(organism, strain):
-    query = f'"{organism}"[Organism] AND "{strain}"[All Fields] AND latest[filter]'
+    query = f'"{organism}"[Organism] AND "{strain}"[All Fields] AND latest[filter]' if strain else f'"{organism}"[Organism] AND latest[filter]'
     esearch = subprocess.Popen(['esearch', '-db', 'assembly', '-query', query], stdout=subprocess.PIPE)
     esummary = subprocess.Popen(['esummary'], stdin=esearch.stdout, stdout=subprocess.PIPE)
     xtract = subprocess.Popen(['xtract', '-pattern', 'DocumentSummary', '-element', 'FtpPath_RefSeq'], stdin=esummary.stdout, stdout=subprocess.PIPE)
@@ -105,7 +105,8 @@ with open(input_file, 'r') as infile, open(output_file, 'w') as outfile:
             print(f"WARNING: Invalid format for line '{organism_strain}', skipping.")
             continue
     
-        organism, strain = organism_strain_split
+        organism = organism_strain_split[0]
+        strain = organism_strain_split[1] if len(organism_strain_split) > 1 else ""
         gca_id, gca_assembly_version, gca_url, taxonomy_id = get_gca_url_and_taxonomy(organism, strain)
         gcf_id, gcf_assembly_version, gcf_url = get_gcf_url(organism, strain)
         outfile.write(f"{organism}, {strain}, {taxonomy_id}, {gca_id}, {gca_assembly_version}, {gca_url}, {gcf_id}, {gcf_assembly_version}, {gcf_url}\n")
