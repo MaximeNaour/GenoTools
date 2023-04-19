@@ -9,6 +9,7 @@ Created on 28/03/2023
 """
 This python script allows you to obtain the most recent GenBank assembly accession number (GCA accession number) URL and RefSeq assembly accession number (GCF accession number) URL from an organism and strain name.
 This script uses the EDirect tool (language: Perl) to access NCBI (National Center for Biotechnology Information) resources.
+Install EDirect in following the steps indicate in this link : https://www.ncbi.nlm.nih.gov/books/NBK179288/
 """
 
 import os
