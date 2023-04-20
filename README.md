@@ -1,4 +1,4 @@
-# GenoCompare
+# GenoTools
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#f8eeec', 'edgeLabelBackground':'#ffffff'}}}%%
