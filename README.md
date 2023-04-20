@@ -9,8 +9,8 @@ classDef exClass font-style:bold;
 classDef exClass font-size:16px;
 
 A("<font size=3>Identify genome/stain<br>script: strain2ref.py") --> B("<font size=3>Download genome from RefSeq/Assembly<br>script: dl_genomes.py");
-B --> C("<font size=3>Gene prediction (Prodigal with Prokka)<br>script: prediction.py");
-C --> D("<font size=3>Gene annotation (UniProtKB/Pfam/TIGRFAMs with Prokka/KEGG/SEED/MetaCyc with EggNOG-mapper)<br>script: annotation.py");
+B --> C("<font size=3>Gene prediction (Prodigal)<br>script: prediction.py");
+C --> D("<font size=3>Gene annotation (UniProtKB/Pfam/TIGRFAMs with Prokka and KEGG/SEED/MetaCyc with EggNOG-mapper)<br>script: annotation.py");
 D --> E("<font size=3>Pathway analysis (Pathway Tools)");
 E --> F("<font size=3>Manual verification (Artemis)");
 F --> G("<font size=3>Store annotation (GenBank)");
@@ -23,7 +23,7 @@ These steps describe a general process for annotating and analysing genomes, whi
 
 2) Download the genome from RefSeq/Assembly : RefSeq and Assembly are databases containing genomic sequences. This step downloads the complete genome of an organism, preferably the RefSeq genome, for analysis. The "dl_genomes.py" script allows downloading and creating directories for each taxon from "strain2ref.py" output file.
 
-3) Gene Prediction: In this phase, the genes and coding sequences (CDS) within the genome are identified. Software such as Prodigal with Prokka are utilized to predict the presence of genes in the genomic sequences. These tools analyze the genomic sequence and recognize the regions that potentially code for proteins, taking into account features such as open reading frames (ORFs) and promoter sequences.
+3) Gene Prediction: In this phase, the genes and coding sequences (CDS) within the genome are identified. Software such as Prodigal are utilized to predict the presence of genes in the genomic sequences. These tools analyze the genomic sequence and recognize the regions that potentially code for proteins, taking into account features such as open reading frames (ORFs) and promoter sequences.
 
 4) Gene Annotation: This step involves assigning biological functions to the predicted genes. Databases such as UniProtKB, Pfam, TIGRFAMs, then KEGG, SEED, and MetaCyc, as well as tools like Prokka and EggNOG-mapper respectively, are used to associate the predicted genes with known functional information. 
 
