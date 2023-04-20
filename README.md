@@ -36,8 +36,8 @@ These steps describe a general process for annotating and analysing genomes, whi
 These steps, taken together, allow us to move from raw genomic sequences to a functional understanding of the genes and metabolic pathways within the organism being studied.
 
 The "unique_seq.py" script allows comparing two or more genomes to identify unique portions in the genome of the organism of interest in comparison to the genomes of other organisms.
-
-<p style="border-bottom: 1px solid; display: inline">References</p> :
+___
+<b>References</b>
 
 1) Hyatt, D., Chen, G. L., LoCascio, P. F., Land, M. L., Larimer, F. W., & Hauser, L. J. (2010). Prodigal: prokaryotic gene recognition and translation initiation site identification. BMC Bioinformatics, 11, 119. https://doi.org/10.1186/1471-2105-11-119
 
