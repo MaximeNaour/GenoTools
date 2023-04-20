@@ -33,6 +33,6 @@ These steps describe a general process for annotating and analysing genomes, whi
 
 7) Storage of the Annotation: In this final step, the annotated genetic information is stored in a database such as GenBank. This makes the information easily accessible and available for use by other researchers in the scientific community. Proper storage and organization of the annotated data is crucial for facilitating further research and collaboration.
 
-These steps, when taken together, allow researchers to move from raw genomic sequences to a functional understanding of the genes and metabolic pathways within the organism being studied.
+These steps, taken together, allow us to move from raw genomic sequences to a functional understanding of the genes and metabolic pathways within the organism being studied.
 
 The "unique_seq.py" script allows comparing two or more genomes to identify unique portions in the genome of the organism of interest in comparison to the genomes of other organisms.
