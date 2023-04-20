@@ -1,6 +1,6 @@
 # GenoTools
 
-### This repository contains various tools, developed by Maxime Naour (UMR 1280 PhAN), to download, analyse and integrate genomic data of prokaryotic organisms at taxonomic and functional scales. 
+#### This repository contains various tools, developed by Maxime Naour (UMR 1280 PhAN), to download, analyse and integrate genomic data of prokaryotic organisms at taxonomic and functional scales. 
 
 ### Scripts' description
 
