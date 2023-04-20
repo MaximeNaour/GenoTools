@@ -29,9 +29,9 @@ These steps describe a general process for annotating and analysing genomes, whi
 
 5) Metabolic Pathway Analysis: This step involves examining the metabolic pathways present in the organism being studied. Metabolic pathways are sets of interconnected biochemical reactions that involve specific molecules. Analysis of these pathways provides a better understanding of how genes and their products (e.g. enzymes and proteins) work together. Tools like KEGG Mapper, MetaCyc or Pathway Tools can be used to identify and visualize the metabolic pathways.
 
-6) Manual Verification: This step involves using software like Artemis to manually verify and correct any errors in the genetic annotations. Although automated tools are quite powerful, manual verification is essential to ensure the accuracy and quality of the annotations. Researchers can check for inconsistencies or mistakes and refine the annotations accordingly.
+6) Manual verification: This step involves using software such as Artemis to manually check and correct any errors in the genetic annotations. Although automated tools are very powerful, manual verification is essential to ensure the accuracy and quality of annotations.
 
-7) Storage of the Annotation: In this final step, the annotated genetic information is stored in a database such as GenBank. This makes the information easily accessible and available for use by other researchers in the scientific community. Proper storage and organization of the annotated data is crucial for facilitating further research and collaboration.
+7) Storage of annotation: In this final step, the annotated genetic information is stored in a database such as GenBank. This makes the information easily accessible and can be used by others in the scientific community. 
 
 These steps, taken together, allow us to move from raw genomic sequences to a functional understanding of the genes and metabolic pathways within the organism being studied.
 
