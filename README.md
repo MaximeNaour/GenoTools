@@ -45,6 +45,21 @@ These steps describe a general process for annotating and analysing genomes, whi
 These steps, taken together, allow us to move from raw genomic sequences to a functional understanding of the genes and metabolic pathways within the organism being studied.
 ___
 
+### Explanation of the NCBI Prokaryotic Genome Annotation Pipeline (PGAP)
+The NCBI Prokaryotic Genome Annotation Pipeline (PGAP) uses several bioinformatics tools and databases to accomplish its annotation tasks. 
+Main tools and databases used:
+
+1. ORFfinder: Tool used for the prediction of open reading frames (ORFs) using the following hidden Markov model (HMM) databases: TIGRFAM, Pfam, PRK HMMs, and NCBIfams.
+2. GeneMark-S2+: A genome annotation tool that makes ab initio predictions for genomic regions that lack HMM or protein evidence.
+3. BlastRules: A set of rules for searching for proteins in lineage-specific reference genomes and protein cluster representatives, using BLAST.
+4. ProSplign: A tool for protein alignment, even in the presence of frame shifts.
+5. RFAM: A database of ncRNA (non-coding RNA) families, used to search for structural RNAs and small ncRNAs in the genome interrogated with Infernal's cmsearch tool.
+6. tRNAscan-SE: A tool used to identify tRNA genes in the DNA sequence.
+7. PILER-CR and CRISPR Recognition Tool (CRT): These tools are used to identify CRISPRs (Clustered Regularly Interspaced Short Palindromic Repeats), a common defence system in prokaryotic genomes.
+8. Protein Family Models: A hierarchical collection of evidence used to search for predicted coding proteins. Proteins are assigned the name and attributes of the highest precedence protein family model they touch.
+9. International Protein Nomenclature Guidelines: The names given to proteins follow these guidelines, agreed upon by the European Bioinformatics Institute (EMBL-EBI), the National Center for Biotechnology Information (NCBI), the Protein Information Resource (PIR), and the Swiss Institute for Bioinformatics (SIB)
+___
+
 ### References
 
 1) Hyatt, D., Chen, G. L., LoCascio, P. F., Land, M. L., Larimer, F. W., & Hauser, L. J. (2010). Prodigal: prokaryotic gene recognition and translation initiation site identification. BMC Bioinformatics, 11, 119. https://doi.org/10.1186/1471-2105-11-119
