@@ -11,7 +11,7 @@ Une fois l'installation terminée, ouvrez Visual Studio Code.
 #### Étape 2: Installation de Remote-WSL Extension
 
 Dans Visual Studio Code, ouvrez le volet Extensions en cliquant sur le carré dans la barre d'activité sur le côté gauche. ![image](https://github.com/MaximeNaour/GenoTools/assets/55536880/21008143-d3d8-422c-9502-c9b32b70aa81)  
-Recherchez "Remote - WSL".  
+Recherchez "WSL".  
 Cliquez sur "Install" pour installer l'extension.  
 
 ### Associer une distribution Linux à Visual Studio Code
