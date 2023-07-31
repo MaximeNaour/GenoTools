@@ -8,7 +8,7 @@ Voir le fichier "wsl_VSC.md" pour travailler dans un environnement Linux/Ubuntu 
 
 #### Etape 2 : Installer EDirect dans votre environnement de travail Linux  
 
-Se référer au fichier "install_edirect.md" 
+Se référer au fichier "install_edirect.md" situé directement dans le répertoire "GenoTools".
 
 La partie la plus fastidieuse est faite Catherine "*pfiou*"... Maintenant laisse-toi guider par ce tutoriel conçu rien que pour toi !
 
