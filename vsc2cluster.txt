@@ -16,7 +16,7 @@ ssh-keygen -t rsa -b 2048 -C <adresse_mail_compte_VSC> -f .ssh/id_rsa
 
 ### c) Appuyer sur "+"
 
-### d) ssh mnaour@front.migale.inrae.fr -i ~/.ssh/id_rsa.pub
+### d) ssh <username>@front.migale.inrae.fr -i ~/.ssh/id_rsa.pub
 
 ### e) Sélectionner le logiciel d'exploitation "Linux"
 
