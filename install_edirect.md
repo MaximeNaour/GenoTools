@@ -40,6 +40,12 @@ cd edirect && ./setup.sh
 
 ### Étape 4 : Ajouter Edirect à votre PATH
 
+Le fichier .bashrc se trouve normalement dans le chemin suivant "/home/<username>/". Voici un exemple d'une commande bash pour s'assurer que le fichier .bashrc se trouve bien à cet emplacement : 
+
+```
+ls -lah /home/maxime-inrae/
+```
+
 Pour pouvoir utiliser Edirect depuis n'importe quel répertoire, vous devez l'ajouter à votre variable d'environnement PATH. Pour ce faire, exécutez la commande suivante :
 
 ```
