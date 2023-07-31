@@ -2,6 +2,8 @@
 
 #### This repository contains various tools, developed by Maxime Naour (UMR 1280 PhAN), to download, analyse and integrate genomic data of prokaryotic organisms at taxonomic and functional scales. 
 
+#### If you need to install a Linux distribution on your Windows computer, please follow the "wsl_VSC.md" link.  
+
 ### Scripts' description
 
 ##### To install Edirect (NCBI) to interact with the NCBI database, using command lines, please refer to the markdown file "install_edirect.md".
