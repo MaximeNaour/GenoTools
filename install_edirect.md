@@ -49,7 +49,7 @@ ou
 ```
 ls -lah ~
 ```
-~ : Le tilde (~) permet d'accéder directement au répertoire HOME de l'utilisateur. 
+Le tilde (~) permet d'accéder directement au répertoire HOME de l'utilisateur. 
 
 Pour pouvoir utiliser Edirect depuis n'importe quel répertoire, vous devez l'ajouter à votre variable d'environnement PATH. Pour ce faire, exécutez la commande suivante :
 
