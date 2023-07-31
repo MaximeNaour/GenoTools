@@ -2,7 +2,7 @@
 
 #### Edirect est une suite d'outils permettant d'accéder aux bases de données du National Center for Biotechnology Information (NCBI) via la ligne de commande. Suivez les étapes ci-dessous pour installer Edirect sur votre système Linux.
 
-### Étape 1 : Mise à jour du système
+### Étape 1 : Mettre à jour votre système Linux (si installé depuis un certain temps)
 
 Avant de commencer, mettez à jour votre système Linux pour vous assurer que vous disposez des dernières versions de tous les paquets et dépendances nécessaires. Exécutez la commande suivante pour mettre à jour votre système :
 
@@ -18,7 +18,7 @@ Edirect nécessite quelques dépendances (notamment Perl) pour fonctionner corre
 sudo apt-get install -y perl cpanminus libxml-simple-perl libwww-perl libnet-perl libexpat1-dev libssl-dev libxml2-dev libjson-perl libdigest-md5-perl
 ```
 
-### Etape 3 : Installer Anaconda3 dans votre environnement de travail pour utiliser conda
+### Etape 3 : Installer l'environnement conda Anaconda3 dans votre espace de travail
 
 Se déplacer dans le répertoire HOME, créer un répertoire "pkg" pour contenir les différents outils et scripts nécessaire à votre travail et télécharger le script d'installation d'Anaconda3 (lien pour voir les différentes versions d'Anaconda : https://repo.anaconda.com/archive/)
 ```
