@@ -39,15 +39,7 @@ Résultat 2 taxids :
 1. 1121021 --> Adlercreutzia equolifaciens subsp. celatus DSM 18785 (souche)
 2. 394340 --> Adlercreutzia equolifaciens subsp. celatus (sous-espèce)
 
-Le Taxonomy ID, ou "taxid", est un identifiant unique attribué par la base de données de taxonomie du NCBI (National Center for Biotechnology Information) à chaque entité taxonomique dans leur système. Il est essentiel de recueillir le taxid pour plusieurs raisons :
-
-1. Unicité: Le taxid est unique à chaque entité taxonomique, qu'il s'agisse d'une espèce, d'un genre, d'une famille, etc. Ainsi, même si deux espèces ont des noms similaires, leurs taxid seront différents, ce qui aide à éviter toute confusion.
-
-2. Stabilité: Les noms scientifiques des organismes peuvent changer au fil du temps en raison de nouvelles découvertes en taxonomie. Par exemple, une espèce pourrait être reclassée dans un genre différent, ou le nom d'une espèce pourrait être corrigé. Le taxid, cependant, reste le même, même si le nom change. Cela signifie que si vous suivez l'historique d'un organisme particulier, vous pouvez toujours le retrouver en utilisant le taxid, même si son nom a changé.
-
-3. Relation taxonomique: Le taxid peut être utilisé pour déterminer les relations taxonomiques entre différents organismes. Par exemple, vous pouvez utiliser le taxid pour trouver tous les autres organismes dans le même genre, la même famille, l'ordre, etc.
-
-4. Recherche de données: Beaucoup de bases de données biologiques, comme celles du NCBI, permettent aux utilisateurs de rechercher des données en utilisant le taxid. Cela peut être plus précis et efficace que d'utiliser le nom de l'organisme, surtout si le nom a changé ou s'il y a une ambiguïté dans le nom.
+Le Taxonomy ID (taxid) est un identifiant unique du NCBI (National Center for Biotechnology Information) assigné à chaque entité taxonomique, garantissant l'unicité et évitant toute confusion entre les espèces à noms similaires. Il assure la stabilité en restant constant malgré les éventuels changements de nom d'un organisme au fil du temps. Le taxid permet également de déterminer les relations taxonomiques entre différents organismes et facilite la recherche de données dans les bases de données biologiques, ce qui s'avère plus précis et efficace que l'utilisation du nom de l'organisme.
 
 #### Partie 2 : Télécharger les informations sur les assemblages de génomes pour "Adlercreutzia equolifaciens subsp. celatus"
 
