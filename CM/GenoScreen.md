@@ -28,6 +28,8 @@ conda activate edirect
 
 #### Partie 1 : Récupérer l'ID taxonomique pour "Adlercreutzia equolifaciens subsp. celatus" afin de télécharger son génome.
 
+Le Taxonomy ID (taxid) est un identifiant unique du NCBI (National Center for Biotechnology Information) assigné à chaque entité taxonomique, garantissant l'unicité et évitant toute confusion entre les espèces à noms similaires. Il assure la stabilité en restant constant malgré les éventuels changements de nom d'un organisme au fil du temps. Le taxid permet également de déterminer les relations taxonomiques entre différents organismes et facilite la recherche de données dans les bases de données biologiques, ce qui s'avère plus précis et efficace que l'utilisation du nom de l'organisme.  
+
 ```
 esearch -db taxonomy -query "Adlercreutzia equolifaciens subsp. celatus[ORGN]" | efetch -format docsum | xtract -pattern DocumentSummary -element Id    
 ```
@@ -38,8 +40,6 @@ esearch -db taxonomy -query "Adlercreutzia equolifaciens subsp. celatus[ORGN]" |
 Résultat 2 taxids : 
 1. 1121021 --> Adlercreutzia equolifaciens subsp. celatus DSM 18785 (souche)
 2. 394340 --> Adlercreutzia equolifaciens subsp. celatus (sous-espèce)
-
-Le Taxonomy ID (taxid) est un identifiant unique du NCBI (National Center for Biotechnology Information) assigné à chaque entité taxonomique, garantissant l'unicité et évitant toute confusion entre les espèces à noms similaires. Il assure la stabilité en restant constant malgré les éventuels changements de nom d'un organisme au fil du temps. Le taxid permet également de déterminer les relations taxonomiques entre différents organismes et facilite la recherche de données dans les bases de données biologiques, ce qui s'avère plus précis et efficace que l'utilisation du nom de l'organisme.
 
 #### Partie 2 : Télécharger les informations sur les assemblages de génomes pour "Adlercreutzia equolifaciens subsp. celatus"
 
