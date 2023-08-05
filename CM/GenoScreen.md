@@ -1,6 +1,6 @@
-## *** Tutoriel spécial Catherine : A l'exploration des génomes ***
+<h2 align="center"><b>Tutoriel spécial Catherine : A l'exploration des génomes</b></h2>
 
-### Etape 1 : Configuration de l'espace de travail
+<h3 align="center"><b>Etape 1 : Configuration de l'espace de travail</b></h3>
 
 #### Avant de partir à l'aventure, il est nécessaire de configurer notre espace de travail.  
 
@@ -14,7 +14,7 @@ Se référer au fichier "install_edirect.md" situé directement dans le réperto
 
 La partie la plus fastidieuse est faite Catherine "*pfiou*"... Maintenant laisse-toi guider par ce tutoriel conçu rien que pour toi !
 
-### Etape 2 : Identification du génome d'intérêt avec Edirect : Précision à portée de main
+<h3 align="center"><b>Etape 2 : Identification du génome d'intérêt avec Edirect : Précision à portée de main</b></h3>
 
 La partie suivante est dédiée à l'utilisation de l'outil NCBI en ligne de commande "EDirect" pour collecter et télécharger les informations génomiques de la bactérie "Adlercreutzia equolifaciens subsp. celatus". Bien sûr, les lignes de commande suivantes peuvent être appliquées à tout autre organisme.
 
@@ -157,5 +157,5 @@ SOURCE      Adlercreutzia equolifaciens subsp. celatus DSM 18785
 
 Si les informations renseignées te semblent correctes, nous pouvons passer à la prochaine étape du tutoriel qui vise à décortiquer les informations génomiques présentes dans le fichier 'GBFF'. Si les informations présentent dans ce fichier ne te convient pas, télécharge d'autres liens 'https' (voir 'partie 4' pour choisir un nouveau lien et 'partie 5' pour le télécharger et décompresser).
 
-### Etape 3 : Explorons le génome !
+<h3 align="center"><b>### Etape 3 : Explorons le génome !</b></h3>
 
