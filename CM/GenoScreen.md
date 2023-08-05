@@ -1,22 +1,24 @@
 ## *** Tutoriel spécial Catherine : A l'exploration des génomes ***
 
-### Avant de partir à l'aventure, il est nécessaire de configurer notre espace de travail.  
+### Etape 1 : Configuration de l'espace de travail
 
-#### Etape 1 : Configurer un environnement de travail avec une distribution Linux - Indispensable pour utiliser des commandes ou outils bioinformatiques.
+#### Avant de partir à l'aventure, il est nécessaire de configurer notre espace de travail.  
+
+#### Partie 1 : Configurer un environnement de travail avec une distribution Linux - Indispensable pour utiliser des commandes ou outils bioinformatiques.
 
 Voir le fichier "wsl_VSC.md" pour travailler dans un environnement Linux/Ubuntu par le biai d'un Windows Subsystem Linux (WLS) et de Visual Studio Code (VSC).  
 
-#### Etape 2 : Installer EDirect dans votre environnement de travail Linux  
+#### Partie 2 : Installer EDirect dans votre environnement de travail Linux  
 
 Se référer au fichier "install_edirect.md" situé directement dans le répertoire "GenoTools".
 
 La partie la plus fastidieuse est faite Catherine "*pfiou*"... Maintenant laisse-toi guider par ce tutoriel conçu rien que pour toi !
 
-### Identification du génome d'intérêt avec Edirect : Précision à portée de main
+### Etape 2 : Identification du génome d'intérêt avec Edirect : Précision à portée de main
 
 La partie suivante est dédiée à l'utilisation de l'outil NCBI en ligne de commande "EDirect" pour collecter et télécharger les informations génomiques de la bactérie "Adlercreutzia equolifaciens subsp. celatus". Bien sûr, les lignes de commande suivantes peuvent être appliquées à tout autre organisme.
 
-#### Avant de se lancer dans les commandes informatiques, il est nécessaire d'avoir installé sur son environnement de travail "conda" et "Edirect" (voir étape 2 si ces outils ne sont pas installés). 
+#### Avant de se lancer dans les commandes informatiques, il est nécessaire d'avoir installé sur son environnement de travail "conda" et "Edirect" (voir étape 1 - partie 2 si ces outils ne sont pas installés). 
 
 ##### Activer l'outil "Edirect" installé dans votre environnement conda. 
 
@@ -155,5 +157,5 @@ SOURCE      Adlercreutzia equolifaciens subsp. celatus DSM 18785
 
 Si les informations renseignées te semblent correctes, nous pouvons passer à la prochaine étape du tutoriel qui vise à décortiquer les informations génomiques présentes dans le fichier 'GBFF'. Si les informations présentent dans ce fichier ne te convient pas, télécharge d'autres liens 'https' (voir 'partie 4' pour choisir un nouveau lien et 'partie 5' pour le télécharger et décompresser).
 
-### Explorons le génome !
+### Etape 3 : Explorons le génome !
 
