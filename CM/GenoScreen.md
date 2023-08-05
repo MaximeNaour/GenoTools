@@ -147,7 +147,7 @@ KEYWORDS    WGS; RefSeq.
 SOURCE      Adlercreutzia equolifaciens subsp. celatus DSM 18785
 ```
 
-Si les informations renseignées te semblent correctes, nous pouvons passer à la prochaine étape du tutoriel qui vise à décortiquer les informations génomiques présentes dans le fichier 'GBFF'. Si les informations présentent dans ce fichier ne te convient pas, télécharge d'autres liens 'https' (voir 'partie 4' pour choisir un nouveau lien et 'partie 5' pour le télécharger et décompresser).
+Si les informations renseignées semblent correctes, nous pouvons passer à la prochaine étape du tutoriel qui vise à décortiquer les informations génomiques présentes dans le fichier 'GBFF'. Si les informations présentent dans ce fichier ne sont pas ceux souhaitées, télécharge d'autres liens 'https' (voir 'partie 4' pour choisir un nouveau lien et 'partie 5' pour le télécharger et décompresser).
 
 <h3 align="center"><b>### Etape 3 : Explorons le génome !</b></h3>
 
