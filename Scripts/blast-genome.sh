@@ -3,7 +3,7 @@
 # Author: Maxime Naour
 # Date(dd-mm-yyyy): 11-10-2023
 
-# Disclaimer : Activer les environnements conda edirect et ncbi : conda activate edirect ncbi
+# Disclaimer : Activer l'environnement conda contenant les packages edirect, fastx_toolkit et blast ~~> Pour moi, ces packages sont dans cet environnement conda : conda activate edirect 
 
 # Vérifier si l'environnement conda edirect est activé
 if [[ $(conda info --envs | grep -c "^\s*edirect\s") -eq 0 ]]; then
