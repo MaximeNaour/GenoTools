@@ -354,7 +354,7 @@ while true; do
           done < "$batch_file"
 
           echo -e "Lancement de BLAST pour le Batch $batch_count/$num_batches en utilisant $(nproc) coeurs."
-          blastn -query "$batch_file" -db temp/genomes_DB -out "$temp_dir/blast_output_${batch_count}.txt" -num_threads "$(nproc)" 2>&1 | tee -a blast_log.txt
+          blastn -query "$batch_file" -db temp/genomes_DB -out "$temp_dir/blast_output_${batch_count}.txt" -num_threads "$(nproc)" -num_descriptions 5 -num_alignments 5 2>&1 | tee -a blast_log.txt
           if [ "${PIPESTATUS[0]}" -ne 0 ]; then
               echo "Erreur lors de l'exécution de BLAST pour le Batch $batch_count/$num_batches"
               cat "$temp_dir/blast_output_${batch_count}_log.txt"
@@ -436,8 +436,9 @@ while true; do
           echo "Les fichiers de sortie ont été renommés en processed_${fastq_file%.*}_partX.txt et sont disponibles dans le répertoire courant."
         else
           mv temp_output.txt "processed_${fastq_file%.*}.txt"
-          echo "Le fichier de sortie a été renommé en processed_${fastq_file%.*}.txt."
-          echo "Le fichier de sortie est disponible dans le répertoire courant."
+          echo -e "\nLe fichier de sortie a été renommé en \033[0;34mprocessed_${fastq_file%.*}.txt\033[0m et est disponible dans le répertoire courant."
+          echo -e "\033[0;34mLe processus est terminé.\033[0m"
+          echo -e "\033[0;34mMerci d'avoir utilisé le script blast-genome.sh.\033[0m"
         fi
       else
         echo "Le fichier de sortie est vide."
