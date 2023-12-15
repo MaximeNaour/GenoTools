@@ -13,15 +13,126 @@ Ce protocole détaille les étapes pour identifier des primers spécifiques à l
 
 ## Étape 1: Préparation de l'Environnement de Travail
 
-1. **Créer un Répertoire de Travail**
+1. **Créer un Répertoire de Travail et se placer dans ce répertoire**
 ```
-mkdir -p [nom_souche]primers/gbct[nom_souche]
+mkdir -p [nom_souche]primers/gbct_[nom_souche]
 cd [nom_souche]_primers
 ```
-2. **Télécharger le Génome de Référence**
+
+2. **Répertoire pour les fichiers de log**
 ```
-wget [lien_ftp_génome_souche] -O gbct_[nom_souche]/[nom_fichier_génome].fna.gz
+mkdir logs
 ```
+
+3. **Répertoire pour la base de données BLAST**
+```
+mkdir db
+```
+
+4. **Répertoire pour les génomes**
+```
+mkdir gbct_[nom_classe]
+```
+
+## Etape 2 : Téléchargement des génomes
+
+1. **Rechercher la souche d'intérêt dans la base de données RefSeq de NCBI et récupérer les liens FTP des génomes RefSeq**
+```
+esearch -db assembly -query "[nom_souche][Organism] AND latest_refseq[filter]" | efetch -format docsum | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F'/' '{print $0"/"$NF"_genomic.fna.gz"}' | sed 's|ftp://|https://|'
+```
+
+2. **Télécharger le génome de référence de la souche d'intérêt**
+```
+wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/[chemin_souche]_genomic.fna.gz -O gbct_[nom_souche]/[nom_souche]_genomic.fna.gz
+```
+
+3. **Compter tous les génomes RefSeq de la classe bactérienne de la souche (exemple : Bacteroidia, Clostridia, etc)**
+```
+esearch -db assembly -query "[nom_classe][Organism] AND latest_refseq[filter]" | efetch -format docsum | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F'/' '{print $0"/"$NF"_genomic.fna.gz"}' | sed 's|ftp://|https://|' | wc -l
+```
+
+4. **Télécharger tous les génomes RefSeq de la classe bactérienne de la souche (exemple : Bacteroidia, Clostridia, etc)**
+```
+esearch -db assembly -query "[nom_classe][Organism] AND latest_refseq[filter]" | efetch -format docsum | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F'/' '{print $0"/"$NF"_genomic.fna.gz"}' | sed 's|ftp://|https://|' | xargs -n 1 wget -P gbct_[nom_classe]/ 
+```
+
+5. **Trouve tous les fichiers .fna.gz qui contiennent le nom de la souche d'intérêt (plusieurs motifs) dans leur première ligne, affiche leur nom et la première ligne de chaque fichier, et compte le nombre de ces fichiers**
+```
+{ find gbct_[nom_classe]/ -name "*.fna.gz" -print0 | xargs -0 -I{} bash -c 'if gunzip -c "{}" | head -1 | grep -q "[motif1]\|[motif2]\|[motif3]"; then echo "{}"; gunzip -c "{}" | head -1; fi'; } | tee >(grep -v '^>' | wc -l | xargs -I{} echo "Nombre de fichiers = {}")
+```
+
+7. **Supprimer le ou les fichiers FASTA identifiés appartenant à la souche d'intérêt**
+```
+rm -rf gbct_[nom_classe]/[fichier1] gbct_[nom_classe]/[fichier2] (etc...)
+```
+
+## Alternative : Utilisation du catalogue Mouse Gastrointestinal Bacteria Catalogue (MGBC) si le génome de cette souche provient de ce catalogue
+
+0. **Télécharger le fichier tsv catalogant tous les MAGS du catalgoue MGBC (https://www.sciencedirect.com/science/article/pii/S1931312821005680#mmc4)**  
+**Nommer le dit fichier : MGBC_mags.tsv**  
+**Le placer dans le répertoire de travail**
+
+1. **Télécharger les génomes des souches spécifiques du catalogue MGBC**
+```
+qsub -cwd -V -N Download_Genomes -o qlogs -e qlogs -pe thread 30 -b y "mkdir -p [species]_MGBC/ && awk -F '\t' '\$12 == \"Scaffold\" {split(\$1, a, \"_\"); gsub(/\\./, \"\", a[2]); print \"ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/\"substr(a[2],1,3)\"/\"substr(a[2],4,3)\"/\"substr(a[2],7,3)\"/\"\$1\"_\"\$2\"/\"\$1\"_\"\$2\"_genomic.fna.gz\"}' MGBC_mags.tsv | xargs -I {} wget -P genomes {}"
+```
+
+2. **Compter le nombre de génomes de souches spécifiques téléchargés**
+```
+ls [species]_MGBC/ | wc -l
+```
+
+Étape 3 : Préparation de la Base de Données BLAST
+
+    Concaténer les génomes téléchargés pour constituer une base de données BLAST
+
+    bash
+
+for file in Bacteroidia/*.fna.gz [species]_MGBC/*.fna.gz; do gzip -dc "$file"; done > db/gbct_combined.fna
+
+Création de la base de données BLAST à partir des génomes concaténés
+
+bash
+
+    makeblastdb -in db/gbct_combined.fna -out db/gbct_combined -parse_seqids -dbtype nucl
+
+Étape 4 : Préparation du Génome de Référence pour la Souche d'Intérêt
+
+    Importer le génome de la souche d'intérêt dans le répertoire db
+
+    css
+
+gzip -dc gbct_[nom_souche]/[nom_souche]_genomic.fna.gz > db/[nom_souche]_genomic.fna
+
+Lister les contigs du fichier FASTA de la souche d'intérêt
+
+arduino
+
+    rg ">" db/[nom_souche]_genomic.fna --no-line-number | awk -F " " '{print $1}' | sed -r 's/>//g' > db/[nom_souche]_contigs.txt
+
+Étape 5 : Réalisation du BLAST
+
+    Effectuer le BLAST entre le génome de la souche d'intérêt et la base de données
+
+    bash
+
+blastn -db db/gbct_combined -query db/[nom_souche]_genomic.fna -out db/nomatching_[nom_souche].txt -outfmt 2
+
+Ou, pour exécuter sur un cluster :
+
+css
+
+    qsub -cwd -V -N Blast.[nom_souche] -o qlogs -e qlogs -pe thread 20 -b y "conda activate blast-2.13.0 && blastn -db db/gbct_combined -query db/[nom_souche]_genomic.fna -out db/nomatching_[nom_souche].txt -outfmt 2 && conda deactivate"
+
+Étape 6 : Extraction et Analyse des Séquences Uniques
+
+    Lancer les scripts Python pour identifier les séquences uniques et celles ayant peu de correspondances
+
+python unique_seq.py
+python few_matches.py
+
+
+
 
 ## Étape 2: Création de la Base de Données
 
