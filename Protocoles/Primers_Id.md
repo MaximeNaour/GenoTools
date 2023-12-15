@@ -74,4 +74,4 @@ qsub -cwd -V -N Blast.[nom_souche] -o qlogs -e qlogs -pe thread 20 -b y "conda a
 
 Voici les paramètres et valeurs utilisés fréquemment (à adapter selon votre situation) : 
 
-
+![image](https://github.com/MaximeNaour/GenoTools/blob/main/images/criteria.png?raw=true)
