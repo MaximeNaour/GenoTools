@@ -74,6 +74,4 @@ qsub -cwd -V -N Blast.[nom_souche] -o qlogs -e qlogs -pe thread 20 -b y "conda a
 
 Voici les paramètres et valeurs utilisés fréquemment (à adapter selon votre situation) : 
 
-<div align="center">
-  ![unnamed](https://github.com/MaximeNaour/GenoTools/assets/55536880/b144fe81-5b5b-499a-b77a-add95e512af0)
-</div>
+
