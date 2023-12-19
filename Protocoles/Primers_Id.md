@@ -6,18 +6,18 @@ Ce protocole détaille les étapes pour identifier des primers spécifiques à l
 
 Ce protocole détaille les étapes pour identifier des primers spécifiques à l'échelle de la souche bactérienne.
 
-## Prérequis
+### Prérequis
 
 - Système ou sous-système Linux (WSL) avec Python 3 installé.
 - Environnements Conda avec BLAST+ et Entrez-Direct installés.
 
-## Aide 
-### Identifier tous les environnements conda ayant un outil d'intérêt (par exemple : makeblastdb)
+### Aide 
+#### Identifier tous les environnements conda ayant un outil d'intérêt (par exemple : makeblastdb)
 ```
 conda info --envs | awk '/\/[a-zA-Z0-9]/ {print $2}' | xargs -I {} find {}/bin -name makeblastdb -print
 ```
 
-## Étape 1: Préparation de l'Environnement de Travail
+### Étape 1: Préparation de l'Environnement de Travail
 
 1. **Créer un Répertoire de Travail et se placer dans ce répertoire**
 ```
@@ -40,7 +40,7 @@ mkdir db
 mkdir gbct_[nom_classe]
 ```
 
-## Etape 2 : Téléchargement des génomes
+### Etape 2 : Téléchargement des génomes
 
 1. **Rechercher la souche d'intérêt dans la base de données RefSeq de NCBI et récupérer les liens FTP des génomes RefSeq**
 ```
@@ -72,9 +72,9 @@ esearch -db assembly -query "[nom_classe][Organism] AND latest_refseq[filter]" |
 rm -rf gbct_[nom_classe]/[fichier1] gbct_[nom_classe]/[fichier2] (etc...)
 ```
 
-## Alternative 
+### Alternative 
 
-### Utilisation du catalogue Mouse Gastrointestinal Bacteria Catalogue (MGBC) si le génome de cette souche provient de ce catalogue
+#### Utilisation du catalogue Mouse Gastrointestinal Bacteria Catalogue (MGBC) si le génome de cette souche provient de ce catalogue
 
 0. **Télécharger le fichier tsv cataloguant tous les MAGS du catalogue MGBC (https://www.sciencedirect.com/science/article/pii/S1931312821005680#mmc4)**  
 **Nommer le dit fichier : MGBC_mags.tsv**  
@@ -99,9 +99,9 @@ ls [species]_MGBC/ | wc -l
 ```
 rm -rf genomes/[fichier1] (etc...)
 ```
-### *** Fin de l'alternative ***
+#### *** Fin de l'alternative ***
 
-## Étape 3 : Préparation de la Base de Données BLAST
+### Étape 3 : Préparation de la Base de Données BLAST
 
 1. **Concaténer les génomes téléchargés pour constituer une base de données BLAST**
 ```
@@ -146,7 +146,7 @@ gzip -dc gbct_[nom_souche]/[nom_souche]_genomic.fna.gz > db/[nom_souche]_genomic
 rg ">" db/[nom_souche]_genomic.fna --no-line-number | awk -F " " '{print $1}' | sed -r 's/>//g' > db/[nom_souche]_contigs.txt
 ```
 
-## Étape 4 : Réalisation du BLAST
+### Étape 4 : Réalisation du BLAST
 
 1. **Activer l'environnement conda ayant l'outil blastn** (ex : path = /usr/local/genome/Anaconda3/envs/blast-2.13.0)
 ```
@@ -162,7 +162,7 @@ blastn -db db/gbct_combined -query db/[nom_souche]_genomic.fna -out db/nomatchin
 qsub -cwd -V -N Blast.[nom_souche] -o qlogs.Blast.[nom_souche] -e qlogs.Blast.[nom_souche] -pe thread 20 -b y "conda activate blast-2.13.0 && blastn -db db/gbct_combined -query db/[nom_souche]_genomic.fna -out db/nomatching_[nom_souche].txt -outfmt 2 && conda deactivate"
 ```
 
-## Étape 5 : Extraction et Analyse des Séquences Uniques
+### Étape 5 : Extraction et Analyse des Séquences Uniques
 
 1. **Lancer le script Python pour identifier les séquences uniques**
 ```
@@ -174,74 +174,19 @@ python unique_seq.py
 python few_matches.py
 ```
 
-3. **Conception des amorces/ primers de PCR (cf. étape 6)**
-
-
-
-
-## Étape 2: Création de la Base de Données
-
-1. **Télécharger les Génomes RefSeq d'une Espèce Spécifique**
-```
-esearch -db assembly -query "[Nom_Espèce][Organism] AND latest_refseq[filter]" | efetch -format docsum | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F'/' '{print $0"/"$NF"_genomic.fna.gz"}' | sed 's|ftp://|https://|' | xargs -n 1 wget -P [Nom_Espèce]_genomes/
-```
-
-2. **Compter le Nombre de Génomes Téléchargés**
-```
-ls [Nom_Espèce]_genomes/*.fna.gz | wc -l
-```
-
-## Étape 3: Filtration et Préparation des Données
-
-1. **Extraire et Analyser les Données du Génome**
-```
-gunzip -c gbct_[nom_souche]/[nom_fichier_génome].fna.gz | head -1
-```
-
-2. **Filtrer les Fichiers Génomiques**
-```
-{ find [Nom_Espèce]_genomes/ -name "*.fna.gz" -print0 | xargs -0 -I{} bash -c 'if gunzip -c "{}" | head -1 | grep -q "[motif_recherche]"; then echo "{}"; gunzip -c "{}" | head -1; fi'; } | tee >(grep -v '^>' | wc -l | xargs -I{} echo "Nombre de fichiers = {}")
-```
-
-## Étape 4: Construction de la Base de Données pour BLAST
-
-1. **Créer le Répertoire de la Base de Données**
-```
-mkdir db
-```
-
-2. **Constituer la Base de Données**
-```
-for file in [Nom_Espèce]genomes/*.fna.gz; do gzip -dc "$file"; done > db/gbct[Nom_Espèce].fna
-```
-
-3. **Construire la Base de Données avec makeblastdb**
-```
-conda activate [env_blast] && makeblastdb -in db/gbct_[Nom_Espèce].fna -out db/gbct_[Nom_Espèce] -parse_seqids -dbtype nucl
-```
-
-## Étape 5: Réalisation du BLAST
-
-1. **Exécuter le BLAST**
-```
-qsub -cwd -V -N Blast.[nom_souche] -o qlogs -e qlogs -pe thread 20 -b y "conda activate [env_blast] && blastn -db db/gbct_[Nom_Espèce] -query db/[nom_fichier_query].fna -out db/nomatching_[nom_souche].txt -outfmt 2 && conda deactivate"
-```
-
-2. **Analyse des Résultats**
-- Lancer le script python <uniq_seq.py> pour l'analyse des séquences uniques.
-- Conception des amorces/ primers de PCR (voir étape 6)
+3. **Conception des amorces/ primers de PCR (cf. étape finale)**  
 
 
 ## Protocole 2 : Identification de primers spécifiques à l'échelle de l'espèce
 
 Ce protocole détaille les étapes pour identifier des primers spécifiques à l'échelle de l'espèce bactérienne.
 
-## Prérequis
+### Prérequis
 
 - Système ou sous-système Linux (WSL) avec Python 3 installé.
 - Environnements Conda avec BLAST+, Entrez-Direct, Prokka et Roary installés.
 
-## Étape 1: Préparation de l'Environnement de Travail
+### Étape 1: Préparation de l'Environnement de Travail
 
 1. **Créer un Répertoire de Travail et s'y déplacer**
 ```
@@ -254,7 +199,7 @@ cd [Nom_Espèce]_primers
 mkdir db
 ```
 
-## Étape 2: Téléchargement des Génomes de l'espèce d'intérêt
+### Étape 2: Téléchargement des Génomes de l'espèce d'intérêt
 
 1. **Rechercher l'organisme "Muribaculum intestinale" dans la base de données RefSeq de NCBI et récupérer les liens FTP des génomes de référence**
 esearch -db assembly -query "Muribaculum intestinale[Organism] AND latest_refseq[filter]" | efetch -format docsum | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F'/' '{print $0"/"$NF"_genomic.fna.gz"}' | sed 's|ftp://|https://|'
@@ -266,7 +211,7 @@ esearch -db assembly -query "Muribaculum intestinale[Organism] AND latest_refseq
     Compter le Nombre de Génomes Téléchargés
     ls [Nom_Espèce]_genomes/*.fna.gz | wc -l
 
-## Étape 3: Préparation des Données
+### Étape 3: Préparation des Données
 
     Afficher la Première Ligne de Chaque Fichier FASTA
     for file in [Nom_Espèce]_genomes/*.fna.gz; do echo -n "$file: "; zcat "$file" | head -1; done
@@ -274,7 +219,7 @@ esearch -db assembly -query "Muribaculum intestinale[Organism] AND latest_refseq
     Identifier et Supprimer les Génomes Spécifiques (si nécessaire)
     for file in [Nom_Espèce]_genomes/*.fna.gz; do echo $file && gunzip -c $file | grep "[Motif_Recherche]"; done
 
-## Étape 4: Annotation et Analyse des Génomes
+### Étape 4: Annotation et Analyse des Génomes
 
     Annoter les Génomes avec Prokka
     for fna in [Nom_Espèce]genomes/*.fna; do qsub -cwd -V -N Prokka$(basename $fna .fna) -o qlogs -e qlogs -pe thread 20 -b y "conda activate prokka-x.x.x && prokka --outdir [Nom_Espèce]_annotations/$(basename $fna .fna) --prefix $(basename $fna .fna) --genus [Genus] --species [Species] --kingdom Bacteria --gcode 11 --cpus 20 $fna && conda deactivate"; done
@@ -288,7 +233,7 @@ esearch -db assembly -query "Muribaculum intestinale[Organism] AND latest_refseq
     Extraire les Séquences du Core Genome
     cp Roary_[Nom_Espèce]/pan_genome_reference.fa db/[Nom_Espèce]_core_genome.fa
 
-## Étape 5: Réalisation et Analyse du BLAST
+### Étape 5: Réalisation et Analyse du BLAST
 
     Réaliser le BLAST entre le Core Genome et la Base de Données
     blastn -db db/gbct_Bacteroidia -query db/[Nom_Espèce]core_genome.fa -out db/nomatching[Nom_Espèce]_core_genome.txt -outfmt 2
@@ -298,9 +243,9 @@ esearch -db assembly -query "Muribaculum intestinale[Organism] AND latest_refseq
         Utiliser un outil de conception de primers PCR pour évaluer les primers potentiels.
 
 
-## Étape 6 : Conception des amorces/ primers
+### Étape finale : Conception des amorces/ primers
 - Examiner les fichiers de sortie pour identifier des primers potentiels à l'aide de l'outil "PCR Primer Design" (Eurofins) : https://eurofinsgenomics.eu/en/ecom/tools/pcr-primer-design/
 
-Voici les paramètres et valeurs utilisés fréquemment (à adapter selon votre situation) : 
+Voici les paramètres et valeurs fréquemment utilisés (à adapter selon votre situation) : 
 
 ![image](https://github.com/MaximeNaour/GenoTools/blob/main/images/criteria.png?raw=true)
