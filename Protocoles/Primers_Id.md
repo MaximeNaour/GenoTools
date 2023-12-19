@@ -12,7 +12,7 @@ Ce protocole détaille les étapes pour identifier des primers spécifiques à l
 - Environnements Conda avec BLAST+ et Entrez-Direct installés.
 
 ## Aide 
-# Identifier tous les environnements conda ayant l'outil makeblastdb (fonctionne avec tout autre outil informatique)
+# Identifier tous les environnements conda ayant un outil d'intérêt (par exemple : makeblastdb)
 ```
 conda info --envs | awk '/\/[a-zA-Z0-9]/ {print $2}' | xargs -I {} find {}/bin -name makeblastdb -print
 ```
