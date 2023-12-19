@@ -75,7 +75,7 @@ esearch -db assembly -query "[nom_classe][Organism] AND latest_refseq[filter]" |
 
 6. **Supprimer le ou les fichiers FASTA identifiés appartenant à la souche d'intérêt**
 ```
-rm -rf gbct_[nom_classe]/[fichier1] gbct_[nom_classe]/[fichier2] (etc...)
+rm -rf gbct_[nom_classe]/[fichier1].fna.gz gbct_[nom_classe]/[fichier2].fna.gz (etc...)
 ```
 
 ### Alternative 
@@ -197,7 +197,7 @@ Ce protocole détaille les étapes pour identifier des primers spécifiques à l
 
 1. **Créer un Répertoire de Travail et se placer dans ce répertoire**
 ```
-mkdir -p [nom_espèce]_primers/
+mkdir [nom_espèce]_primers/
 cd [nom_espèce]_primers
 ```
 
@@ -209,11 +209,6 @@ mkdir logs
 3. **Répertoire pour la base de données BLAST**
 ```
 mkdir db
-```
-
-4. **Répertoire pour les génomes qui seront inclus dans la base de données**
-```
-mkdir gbct_[nom_classe]
 ```
 
 ### Etape 2 : Téléchargement des génomes
@@ -237,26 +232,32 @@ qsub -cwd -V -N DL_[nom_espèce] -o qlogs.DL_[nom_espèce] -e qlogs.DL_[nom_esp�
 ```
 
 3. **Compter le nombre de génomes téléchargés**
+```
 ls [nom_espèce]_genomes/*.fna.gz | wc -l
+```
 
-3. **Compter tous les génomes RefSeq de la classe bactérienne de la souche (exemple : Bacteroidia, Clostridia, etc)**
+4. **Compter tous les génomes RefSeq de la classe bactérienne de la souche d'intérêt (exemple : Bacteroidia, Clostridia, etc)**
 ```
 esearch -db assembly -query "[nom_classe][Organism] AND latest_refseq[filter]" | efetch -format docsum | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F'/' '{print $0"/"$NF"_genomic.fna.gz"}' | sed 's|ftp://|https://|' | wc -l
 ```
 
-4. **Télécharger tous les génomes RefSeq de la classe bactérienne de la souche (exemple : Bacteroidia, Clostridia, etc)**
+5. **Télécharger tous les génomes RefSeq de la classe bactérienne de la souche d'intérêt et les placer dans un répertoire**
 ```
 esearch -db assembly -query "[nom_classe][Organism] AND latest_refseq[filter]" | efetch -format docsum | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F'/' '{print $0"/"$NF"_genomic.fna.gz"}' | sed 's|ftp://|https://|' | xargs -n 1 wget -P gbct_[nom_classe]/ 
 ```
+**Ou envoyer cette commande sur un cluster de calcul SGE**
+```
+qsub -cwd -V -N DL_[nom_classe] -o qlogs.DL_[nom_classe] -e qlogs.DL_[nom_classe] -pe thread 20 -b y "conda activate entrez-direct-15.6 && esearch -db assembly -query '[nom_classe][Organism] AND latest_refseq[filter]' | efetch -format docsum | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F'/' '{print \$0\"/\"\$NF\"_genomic.fna.gz\"}' | sed 's|ftp://|https://|' | xargs -n 1 wget -P [nom_classe]_genomes/ && conda deactivate"
+```
 
-5. **Trouve tous les fichiers .fna.gz qui contiennent le nom de la souche d'intérêt (plusieurs motifs) dans leur première ligne, affiche leur nom et la première ligne de chaque fichier, et compte le nombre de ces fichiers**
+6. **Trouve tous les fichiers .fna.gz qui contiennent l'espèce d'intérêt (si besoin, autres motifs permettant d'identifier les contigs de la bactérie d'intérêt) dans leur première ligne, affiche leur nom et la première ligne de chaque fichier, et compte le nombre de ces fichiers**
 ```
-{ find gbct_[nom_classe]/ -name "*.fna.gz" -print0 | xargs -0 -I{} bash -c 'if gunzip -c "{}" | head -1 | grep -q "[motif1]\|[motif2]\|[motif3]"; then echo "{}"; gunzip -c "{}" | head -1; fi'; } | tee >(grep -v '^>' | wc -l | xargs -I{} echo "Nombre de fichiers = {}")
+{ find [nom_classe]_genomes/ -name "*.fna.gz" -print0 | xargs -0 -I{} bash -c 'if gunzip -c "{}" | head -1 | grep -q "[nom_espèce]\|[motif2]\|[motif3]"; then echo "{}"; gunzip -c "{}" | head -1; fi'; } | tee >(grep -v '^>' | wc -l | xargs -I{} echo "Nombre de fichiers = {}")
 ```
 
-6. **Supprimer le ou les fichiers FASTA identifiés appartenant à la souche d'intérêt**
+6. **Supprimer le ou les fichiers FASTA identifiés appartenant à l'espèce d'intérêt**
 ```
-rm -rf gbct_[nom_classe]/[fichier1] gbct_[nom_classe]/[fichier2] (etc...)
+rm -rf [nom_classe]_genomes/[fichier1].fna.gz [nom_classe]_genomes/[fichier2].fna.gz (etc...)
 ```
 
 ### Alternative 
