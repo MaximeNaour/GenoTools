@@ -43,8 +43,12 @@ mkdir gbct_[nom_classe]
 ```
 
 ### Etape 2 : Téléchargement des génomes
+0. **Activer l'environnement conda contenant l'outil Entrez-Direct** (path = /usr/local/genome/Anaconda3/envs/entrez-direct-15.6)
+```
+conda activate entrez-direct-15.6
+```
 
-1. **Rechercher la souche d'intérêt dans la base de données RefSeq de NCBI et récupérer les liens FTP des génomes RefSeq**
+2. **Rechercher la souche d'intérêt dans la base de données RefSeq de NCBI et récupérer les liens FTP des génomes RefSeq**
 ```
 esearch -db assembly -query "[nom_souche][Organism] AND latest_refseq[filter]" | efetch -format docsum | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F'/' '{print $0"/"$NF"_genomic.fna.gz"}' | sed 's|ftp://|https://|'
 ```
@@ -128,7 +132,7 @@ tar -czvf genomes_[nom_classe].tar.gz gbct_[nom_classe]/ && rm -rf gbct_[nom_cla
 tar -czvf [species]_MGBC.tar.gz [species]_MGBC/ && rm -rf [species]_MGBC/
 ```
 
-4. **Activer l'environnement conda ayant l'outil makeblastdb** (ex : path = /usr/local/genome/Anaconda3/envs/blast-2.13.0)
+4. **Activer l'environnement conda contenant l'outil makeblastdb** (ex : path = /usr/local/genome/Anaconda3/envs/blast-2.13.0)
 ```
 conda activate blast-2.13.0 
 ```
@@ -212,12 +216,11 @@ mkdir db
 mkdir gbct_[nom_classe]
 ```
 
-5. **Répertoire pour les génomes des**
-```
-mkdir gbct_[nom_classe]
-```
-
 ### Etape 2 : Téléchargement des génomes
+0. **Activer l'environnement conda contenant l'outil Entrez-Direct** (path = /usr/local/genome/Anaconda3/envs/entrez-direct-15.6)
+```
+conda activate entrez-direct-15.6
+```
 
 1. **Rechercher la souche d'intérêt dans la base de données RefSeq de NCBI et récupérer les liens FTP des génomes RefSeq**
 ```
