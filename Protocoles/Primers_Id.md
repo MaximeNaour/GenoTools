@@ -164,49 +164,17 @@ qsub -cwd -V -N Blast.[nom_souche] -o qlogs.Blast.[nom_souche] -e qlogs.Blast.[n
 
 ## Étape 5 : Extraction et Analyse des Séquences Uniques
 
-
-
-
-Création de la base de données BLAST à partir des génomes concaténés
-
-bash
-
-    makeblastdb -in db/gbct_combined.fna -out db/gbct_combined -parse_seqids -dbtype nucl
-
-Étape 4 : Préparation du Génome de Référence pour la Souche d'Intérêt
-
-    Importer le génome de la souche d'intérêt dans le répertoire db
-
-    css
-
-gzip -dc gbct_[nom_souche]/[nom_souche]_genomic.fna.gz > db/[nom_souche]_genomic.fna
-
-Lister les contigs du fichier FASTA de la souche d'intérêt
-
-arduino
-
-    rg ">" db/[nom_souche]_genomic.fna --no-line-number | awk -F " " '{print $1}' | sed -r 's/>//g' > db/[nom_souche]_contigs.txt
-
-Étape 5 : Réalisation du BLAST
-
-    Effectuer le BLAST entre le génome de la souche d'intérêt et la base de données
-
-    bash
-
-blastn -db db/gbct_combined -query db/[nom_souche]_genomic.fna -out db/nomatching_[nom_souche].txt -outfmt 2
-
-Ou, pour exécuter sur un cluster :
-
-css
-
-    qsub -cwd -V -N Blast.[nom_souche] -o qlogs -e qlogs -pe thread 20 -b y "conda activate blast-2.13.0 && blastn -db db/gbct_combined -query db/[nom_souche]_genomic.fna -out db/nomatching_[nom_souche].txt -outfmt 2 && conda deactivate"
-
-Étape 6 : Extraction et Analyse des Séquences Uniques
-
-    Lancer les scripts Python pour identifier les séquences uniques et celles ayant peu de correspondances
-
+1. **Lancer le script Python pour identifier les séquences uniques**
+```
 python unique_seq.py
+```
+
+2. **Si vous n'obtenez pas assez de séquences uniques pour votre utilisation, lancer le script Python suivant pour identifier les séquences peu partagées entre votre souche d'intérêt et la base de données**
+```
 python few_matches.py
+```
+
+3. **Conception des amorces/ primers de PCR (cf. étape 6)**
 
 
 
