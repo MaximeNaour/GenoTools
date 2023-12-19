@@ -136,6 +136,35 @@ conda activate blast-2.13.0
 makeblastdb -in db/gbct_combined.fna -out db/gbct_combined -parse_seqids -dbtype nucl
 ```
 
+6. **Importer dans le répertoire db/, le génome FASTA décompressé de la bactérie d'intérêt (= Query) afin de faire le BLAST**
+```
+gzip -dc gbct_[nom_souche]/[nom_souche]_genomic.fna.gz > db/[nom_souche]_genomic.fna
+```
+
+7. **Lister les contigs du fichier FASTA de la souche MGBC112867**
+```
+rg ">" db/[nom_souche]_genomic.fna --no-line-number | awk -F " " '{print $1}' | sed -r 's/>//g' > db/[nom_souche]_contigs.txt
+```
+
+## Étape 4 : Réalisation du BLAST
+
+1. **Activer l'environnement conda ayant l'outil blastn** (ex : path = /usr/local/genome/Anaconda3/envs/blast-2.13.0)
+```
+conda activate blast-2.13.0 
+```
+
+2. **Réaliser le BLAST entre le fichier FASTA de la bactérie d'intérêt (= Query) et la base de données précédemment constituées**
+```
+blastn -db db/gbct_combined -query db/[nom_souche]_genomic.fna -out db/nomatching_[nom_souche].txt -outfmt 2
+```
+**Ou, execution sur un cluster SGE**
+```
+qsub -cwd -V -N Blast.[nom_souche] -o qlogs.Blast.[nom_souche] -e qlogs.Blast.[nom_souche] -pe thread 20 -b y "conda activate blast-2.13.0 && blastn -db db/gbct_combined -query db/[nom_souche]_genomic.fna -out db/nomatching_[nom_souche].txt -outfmt 2 && conda deactivate"
+```
+
+## Étape 5 : Extraction et Analyse des Séquences Uniques
+
+
 
 
 Création de la base de données BLAST à partir des génomes concaténés
