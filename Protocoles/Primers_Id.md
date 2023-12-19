@@ -11,6 +11,12 @@ Ce protocole détaille les étapes pour identifier des primers spécifiques à l
 - Système ou sous-système Linux (WSL) avec Python 3 installé.
 - Environnements Conda avec BLAST+ et Entrez-Direct installés.
 
+## Aide 
+# Identifier tous les environnements conda ayant l'outil makeblastdb (fonctionne avec tout autre outil informatique)
+```
+conda info --envs | awk '/\/[a-zA-Z0-9]/ {print $2}' | xargs -I {} find {}/bin -name makeblastdb -print
+```
+
 ## Étape 1: Préparation de l'Environnement de Travail
 
 1. **Créer un Répertoire de Travail et se placer dans ce répertoire**
@@ -61,14 +67,16 @@ esearch -db assembly -query "[nom_classe][Organism] AND latest_refseq[filter]" |
 { find gbct_[nom_classe]/ -name "*.fna.gz" -print0 | xargs -0 -I{} bash -c 'if gunzip -c "{}" | head -1 | grep -q "[motif1]\|[motif2]\|[motif3]"; then echo "{}"; gunzip -c "{}" | head -1; fi'; } | tee >(grep -v '^>' | wc -l | xargs -I{} echo "Nombre de fichiers = {}")
 ```
 
-7. **Supprimer le ou les fichiers FASTA identifiés appartenant à la souche d'intérêt**
+6. **Supprimer le ou les fichiers FASTA identifiés appartenant à la souche d'intérêt**
 ```
 rm -rf gbct_[nom_classe]/[fichier1] gbct_[nom_classe]/[fichier2] (etc...)
 ```
 
-## Alternative : Utilisation du catalogue Mouse Gastrointestinal Bacteria Catalogue (MGBC) si le génome de cette souche provient de ce catalogue
+## Alternative 
 
-0. **Télécharger le fichier tsv catalogant tous les MAGS du catalgoue MGBC (https://www.sciencedirect.com/science/article/pii/S1931312821005680#mmc4)**  
+### Utilisation du catalogue Mouse Gastrointestinal Bacteria Catalogue (MGBC) si le génome de cette souche provient de ce catalogue
+
+0. **Télécharger le fichier tsv cataloguant tous les MAGS du catalogue MGBC (https://www.sciencedirect.com/science/article/pii/S1931312821005680#mmc4)**  
 **Nommer le dit fichier : MGBC_mags.tsv**  
 **Le placer dans le répertoire de travail**
 
@@ -82,13 +90,53 @@ qsub -cwd -V -N Download_Genomes -o qlogs -e qlogs -pe thread 30 -b y "mkdir -p 
 ls [species]_MGBC/ | wc -l
 ```
 
-Étape 3 : Préparation de la Base de Données BLAST
+3. **Trouve tous les fichiers .fna.gz qui contiennent le nom de la souche d'intérêt (plusieurs motifs) dans leur première ligne, affiche leur nom et la première ligne de chaque fichier, et compte le nombre de ces fichiers**
+```
+{ find genomes/ -name "*.fna.gz" -print0 | xargs -0 -I{} bash -c 'if gunzip -c "{}" | head -1 | grep -q "[motif1]\|[motif2]\|[motif3]"; then echo "{}"; gunzip -c "{}" | head -1; fi'; } | tee >(grep -v '^>' | wc -l | xargs -I{} echo "Nombre de fichiers = {}")
+```
 
-    Concaténer les génomes téléchargés pour constituer une base de données BLAST
+4. **Supprimer le ou les fichiers FASTA identifiés appartenant à la souche d'intérêt**
+```
+rm -rf genomes/[fichier1] (etc...)
+```
+### *** Fin de l'alternative ***
 
-    bash
+## Étape 3 : Préparation de la Base de Données BLAST
 
-for file in Bacteroidia/*.fna.gz [species]_MGBC/*.fna.gz; do gzip -dc "$file"; done > db/gbct_combined.fna
+1. **Concaténer les génomes téléchargés pour constituer une base de données BLAST**
+```
+for file in gbct_[nom_classe]/*.fna.gz; do gzip -dc "$file"; done > db/gbct_combined.fna
+```
+**ou avec les génomes téléchargés à partir du catalogue MGBC**
+```
+for file in [species]_MGBC/*.fna.gz; do gzip -dc "$file"; done > db/gbct_combined.fna
+```
+
+2. **Compter le nombre de contigs**
+```
+rg -c ">" db/gbct_combined.fna
+```
+
+3. **Compresser le répertoire contenant les génomes téléchargés pour économiser de l'espace disque puis les supprimer**
+```
+tar -czvf genomes_[nom_classe].tar.gz gbct_[nom_classe]/ && rm -rf gbct_[nom_classe]/ 
+```
+**ou avec les génomes téléchargés à partir du catalogue MGBC**
+```
+tar -czvf [species]_MGBC.tar.gz [species]_MGBC/ && rm -rf [species]_MGBC/
+```
+
+4. **Activer l'environnement conda ayant l'outil makeblastdb** (ex : path = /usr/local/genome/Anaconda3/envs/blast-2.13.0)
+```
+conda activate blast-2.13.0 
+```
+
+5. **Constituer la base de données à partir du fichier multifasta contenant tous les génomes**
+```
+makeblastdb -in db/gbct_combined.fna -out db/gbct_combined -parse_seqids -dbtype nucl
+```
+
+
 
 Création de la base de données BLAST à partir des génomes concaténés
 
