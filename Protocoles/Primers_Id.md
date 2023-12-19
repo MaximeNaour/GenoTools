@@ -197,7 +197,7 @@ Ce protocole détaille les étapes pour identifier des primers spécifiques à l
 
 1. **Créer un Répertoire de Travail et se placer dans ce répertoire**
 ```
-mkdir -p [nom_espèce]_primers/gbct_[nom_espèce]
+mkdir -p [nom_espèce]_primers/
 cd [nom_espèce]_primers
 ```
 
@@ -222,15 +222,22 @@ mkdir gbct_[nom_classe]
 conda activate entrez-direct-15.6
 ```
 
-1. **Rechercher la souche d'intérêt dans la base de données RefSeq de NCBI et récupérer les liens FTP des génomes RefSeq**
+1. **Rechercher l'espèce d'intérêt dans la base de données RefSeq de NCBI et récupérer les liens FTP des génomes RefSeq**
 ```
-esearch -db assembly -query "[nom_souche][Organism] AND latest_refseq[filter]" | efetch -format docsum | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F'/' '{print $0"/"$NF"_genomic.fna.gz"}' | sed 's|ftp://|https://|'
+esearch -db assembly -query "[nom_espèce][Organism] AND latest_refseq[filter]" | efetch -format docsum | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F'/' '{print $0"/"$NF"_genomic.fna.gz"}' | sed 's|ftp://|https://|'
 ```
 
-2. **Télécharger le génome de référence de la souche d'intérêt**
+2. **Télécharger tous les génomes RefSeq de l'espèce d'intérêt et les placer dans un répertoire**
 ```
-wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/[chemin_souche]_genomic.fna.gz -O gbct_[nom_souche]/[nom_souche]_genomic.fna.gz
+esearch -db assembly -query "[nom_espèce][Organism] AND latest_refseq[filter]" | efetch -format docsum | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F'/' '{print $0"/"$NF"_genomic.fna.gz"}' | sed 's|ftp://|https://|' | xargs -n 1 wget -P [nom_espèce]_genomes/ 
 ```
+**Ou envoyer cette commande sur un cluster de calcul SGE**
+```
+qsub -cwd -V -N DL_[nom_espèce] -o qlogs.DL_[nom_espèce] -e qlogs.DL_[nom_espèce] -pe thread 20 -b y "conda activate entrez-direct-15.6 && esearch -db assembly -query '[nom_espèce][Organism] AND latest_refseq[filter]' | efetch -format docsum | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F'/' '{print \$0\"/\"\$NF\"_genomic.fna.gz\"}' | sed 's|ftp://|https://|' | xargs -n 1 wget -P [nom_espèce]_genomes/ && conda deactivate"
+```
+
+3. **Compter le nombre de génomes téléchargés**
+ls [nom_espèce]_genomes/*.fna.gz | wc -l
 
 3. **Compter tous les génomes RefSeq de la classe bactérienne de la souche (exemple : Bacteroidia, Clostridia, etc)**
 ```
