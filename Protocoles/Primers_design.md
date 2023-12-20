@@ -71,6 +71,10 @@ esearch -db assembly -query "[nom_classe][Organism] AND latest_refseq[filter]" |
 ```
 esearch -db assembly -query "[nom_classe][Organism] AND latest_refseq[filter]" | efetch -format docsum | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F'/' '{print $0"/"$NF"_genomic.fna.gz"}' | sed 's|ftp://|https://|' | xargs -n 1 wget -P gbct_[nom_classe]/ 
 ```
+**Ou envoyer cette commande sur un cluster de calcul SGE**
+```
+qsub -cwd -V -N DL_[nom_classe] -o qlogs.DL_[nom_classe] -e qlogs.DL_[nom_classe] -pe thread 20 -b y "esearch -db assembly -query '[nom_classe][Organism] AND latest_refseq[filter]' | efetch -format docsum | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F'/' '{print $0"/"$NF"genomic.fna.gz"}' | sed 's|ftp://|https://|' | xargs -n 1 wget -P gbct_[nom_classe]/"
+```
 
 5. **Trouve tous les fichiers .fna.gz qui contiennent le nom de la souche d'intérêt (plusieurs motifs) dans leur première ligne, affiche leur nom et la première ligne de chaque fichier, et compte le nombre de ces fichiers**
 ```
@@ -120,6 +124,14 @@ for file in gbct_[nom_classe]/*.fna.gz; do gzip -dc "$file"; done > db/gbct_comb
 ```
 for file in [species]_MGBC/*.fna.gz; do gzip -dc "$file"; done > db/gbct_combined.fna
 ```
+**Ou, Concaténer les génomes téléchargés pour constituer une base de données BLAST sur un cluster SGE**
+```
+qsub -cwd -V -N Concat_[nom_classe] -o qlogs.Concat_[nom_classe] -e qlogs.Concat_[nom_classe] -pe thread 20 -b y "for file in gbct_[nom_classe]/*.fna.gz; do gzip -dc \$file; done > db/gbct_combined.fna"
+```
+**ou avec les génomes téléchargés à partir du catalogue MGBC**
+```
+qsub -cwd -V -N Concat_[species] -o qlogs.Concat_[species] -e qlogs.Concat_[species] -pe thread 20 -b y "for file in [species]_MGBC/*.fna.gz; do gzip -dc \$file; done > db/gbct_combined.fna"
+```
 
 2. **Compter le nombre de contigs**
 ```
@@ -133,6 +145,14 @@ tar -czvf genomes_[nom_classe].tar.gz gbct_[nom_classe]/ && rm -rf gbct_[nom_cla
 **ou avec les génomes téléchargés à partir du catalogue MGBC**
 ```
 tar -czvf [species]_MGBC.tar.gz [species]_MGBC/ && rm -rf [species]_MGBC/
+```
+**Ou, Compresser le répertoire contenant les génomes téléchargés pour économiser de l'espace disque puis les supprimer sur un cluster SGE**
+```
+qsub -cwd -V -N Compress_[nom_classe] -o qlogs.Compress_[nom_classe] -e qlogs.Compress_[nom_classe] -pe thread 15 -b y "tar -czvf genomes_[nom_classe].tar.gz gbct_[nom_classe]/ && rm -rf gbct_[nom_classe]/"
+```
+**ou avec les génomes téléchargés à partir du catalogue MGBC**
+```
+qsub -cwd -V -N Compress_[species] -o qlogs.Compress_[species] -e qlogs.Compress_[species] -pe thread 15 -b y "tar -czvf [species]_MGBC.tar.gz [species]_MGBC/ && rm -rf [species]_MGBC/"
 ```
 
 4. **Activer l'environnement conda contenant l'outil makeblastdb** (ex : path = /usr/local/genome/Anaconda3/envs/blast-2.13.0)
