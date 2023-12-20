@@ -4,7 +4,7 @@
 **PhD Student - UMR 1280 PhAN (Nantes, France)**  
 **date : 20/12/2023**  
 
-**Description : Ce protocole détaille les étapes pour identifier des primers spécifiques à l'échelle de la souche bactérienne (Protocole 1) et à l'échelle de l'espèce bactérienne (Protocole 2).**  
+**Description : Ce protocole présente une méthode standardisée pour identifier des primers spécifiques à l'échelle de la souche bactérienne (Protocole 1) et à l'échelle de l'espèce bactérienne (Protocole 2).**  
 
 ---
 
