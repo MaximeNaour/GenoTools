@@ -73,7 +73,7 @@ esearch -db assembly -query "[nom_classe][Organism] AND latest_refseq[filter]" |
 ```
 **Ou envoyer cette commande sur un cluster de calcul SGE**
 ```
-qsub -cwd -V -N DL_[nom_classe] -o qlogs.DL_[nom_classe] -e qlogs.DL_[nom_classe] -pe thread 20 -b y "esearch -db assembly -query '[nom_classe][Organism] AND latest_refseq[filter]' | efetch -format docsum | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F'/' '{print $0"/"$NF"genomic.fna.gz"}' | sed 's|ftp://|https://|' | xargs -n 1 wget -P gbct_[nom_classe]/"
+qsub -cwd -V -N DL_[nom_classe] -o logs/qlogs.DL_[nom_classe] -e logs/qlogs.DL_[nom_classe] -pe thread 20 -b y "esearch -db assembly -query '[nom_classe][Organism] AND latest_refseq[filter]' | efetch -format docsum | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F'/' '{print $0"/"$NF"genomic.fna.gz"}' | sed 's|ftp://|https://|' | xargs -n 1 wget -P gbct_[nom_classe]/"
 ```
 
 5. **Trouve tous les fichiers .fna.gz qui contiennent le nom de la souche d'intérêt (plusieurs motifs) dans leur première ligne, affiche leur nom et la première ligne de chaque fichier, et compte le nombre de ces fichiers**
@@ -95,7 +95,7 @@ rm -rf gbct_[nom_classe]/[fichier1].fna.gz gbct_[nom_classe]/[fichier2].fna.gz (
 
 1. **Télécharger les génomes des souches spécifiques du catalogue MGBC**
 ```
-qsub -cwd -V -N Download_Genomes -o qlogs -e qlogs -pe thread 30 -b y "mkdir -p [species]_MGBC/ && awk -F '\t' '\$12 == \"Scaffold\" {split(\$1, a, \"_\"); gsub(/\\./, \"\", a[2]); print \"ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/\"substr(a[2],1,3)\"/\"substr(a[2],4,3)\"/\"substr(a[2],7,3)\"/\"\$1\"_\"\$2\"/\"\$1\"_\"\$2\"_genomic.fna.gz\"}' MGBC_mags.tsv | xargs -I {} wget -P genomes {}"
+qsub -cwd -V -N Download_Genomes -o logs/qlogs.DL_MGBC -e logs/qlogs.DL_MGBC -pe thread 30 -b y "mkdir -p [species]_MGBC/ && awk -F '\t' '\$12 == \"Scaffold\" {split(\$1, a, \"_\"); gsub(/\\./, \"\", a[2]); print \"ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/\"substr(a[2],1,3)\"/\"substr(a[2],4,3)\"/\"substr(a[2],7,3)\"/\"\$1\"_\"\$2\"/\"\$1\"_\"\$2\"_genomic.fna.gz\"}' MGBC_mags.tsv | xargs -I {} wget -P genomes {}"
 ```
 
 2. **Compter le nombre de génomes de souches spécifiques téléchargés**
@@ -126,11 +126,11 @@ for file in [species]_MGBC/*.fna.gz; do gzip -dc "$file"; done > db/gbct_combine
 ```
 **Ou, Concaténer les génomes téléchargés pour constituer une base de données BLAST sur un cluster SGE**
 ```
-qsub -cwd -V -N Concat_[nom_classe] -o qlogs.Concat_[nom_classe] -e qlogs.Concat_[nom_classe] -pe thread 20 -b y "for file in gbct_[nom_classe]/*.fna.gz; do gzip -dc \$file; done > db/gbct_combined.fna"
+qsub -cwd -V -N Concat_[nom_classe] -o logs/qlogs.Concat_[nom_classe] -e logs/qlogs.Concat_[nom_classe] -pe thread 20 -b y "for file in gbct_[nom_classe]/*.fna.gz; do gzip -dc \$file; done > db/gbct_combined.fna"
 ```
 **ou avec les génomes téléchargés à partir du catalogue MGBC**
 ```
-qsub -cwd -V -N Concat_[species] -o qlogs.Concat_[species] -e qlogs.Concat_[species] -pe thread 20 -b y "for file in [species]_MGBC/*.fna.gz; do gzip -dc \$file; done > db/gbct_combined.fna"
+qsub -cwd -V -N Concat_[species] -o logs/qlogs.Concat_[species] -e logs/qlogs.Concat_[species] -pe thread 20 -b y "for file in [species]_MGBC/*.fna.gz; do gzip -dc \$file; done > db/gbct_combined.fna"
 ```
 
 2. **Compter le nombre de contigs**
@@ -148,11 +148,11 @@ tar -czvf [species]_MGBC.tar.gz [species]_MGBC/ && rm -rf [species]_MGBC/
 ```
 **Ou, Compresser le répertoire contenant les génomes téléchargés pour économiser de l'espace disque puis les supprimer sur un cluster SGE**
 ```
-qsub -cwd -V -N Compress_[nom_classe] -o qlogs.Compress_[nom_classe] -e qlogs.Compress_[nom_classe] -pe thread 15 -b y "tar -czvf genomes_[nom_classe].tar.gz gbct_[nom_classe]/ && rm -rf gbct_[nom_classe]/"
+qsub -cwd -V -N Compress_[nom_classe] -o logs/qlogs.Compress_[nom_classe] -e logs/qlogs.Compress_[nom_classe] -pe thread 15 -b y "tar -czvf genomes_[nom_classe].tar.gz gbct_[nom_classe]/ && rm -rf gbct_[nom_classe]/"
 ```
 **ou avec les génomes téléchargés à partir du catalogue MGBC**
 ```
-qsub -cwd -V -N Compress_[species] -o qlogs.Compress_[species] -e qlogs.Compress_[species] -pe thread 15 -b y "tar -czvf [species]_MGBC.tar.gz [species]_MGBC/ && rm -rf [species]_MGBC/"
+qsub -cwd -V -N Compress_[species] -o logs/qlogs.Compress_[species] -e logs/qlogs.Compress_[species] -pe thread 15 -b y "tar -czvf [species]_MGBC.tar.gz [species]_MGBC/ && rm -rf [species]_MGBC/"
 ```
 
 4. **Activer l'environnement conda contenant l'outil makeblastdb** (ex : path = /usr/local/genome/Anaconda3/envs/blast-2.13.0)
@@ -188,7 +188,7 @@ blastn -db db/gbct_combined -query db/[nom_souche]_genomic.fna -out db/nomatchin
 ```
 **Ou, execution sur un cluster SGE**
 ```
-qsub -cwd -V -N Blast.[nom_souche] -o qlogs.Blast.[nom_souche] -e qlogs.Blast.[nom_souche] -pe thread 20 -b y "conda activate blast-2.13.0 && blastn -db db/gbct_combined -query db/[nom_souche]_genomic.fna -out db/nomatching_[nom_souche].txt -outfmt 2 && conda deactivate"
+qsub -cwd -V -N Blast.[nom_souche] -o logs/qlogs.Blast.[nom_souche] -e logs/qlogs.Blast.[nom_souche] -pe thread 20 -b y "conda activate blast-2.13.0 && blastn -db db/gbct_combined -query db/[nom_souche]_genomic.fna -out db/nomatching_[nom_souche].txt -outfmt 2 && conda deactivate"
 ```
 
 ### Étape 5 : Extraction et Analyse des Séquences Uniques
@@ -251,7 +251,7 @@ esearch -db assembly -query "[nom_espèce][Organism] AND latest_refseq[filter]" 
 ```
 **Ou envoyer cette commande sur un cluster de calcul SGE**
 ```
-qsub -cwd -V -N DL_[nom_espèce] -o qlogs.DL_[nom_espèce] -e qlogs.DL_[nom_espèce] -pe thread 20 -b y "conda activate entrez-direct-15.6 && esearch -db assembly -query '[nom_espèce][Organism] AND latest_refseq[filter]' | efetch -format docsum | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F'/' '{print \$0\"/\"\$NF\"_genomic.fna.gz\"}' | sed 's|ftp://|https://|' | xargs -n 1 wget -P [nom_espèce]_genomes/ && conda deactivate"
+qsub -cwd -V -N DL_[nom_espèce] -o logs/qlogs.DL_[nom_espèce] -e logs/qlogs.DL_[nom_espèce] -pe thread 20 -b y "conda activate entrez-direct-15.6 && esearch -db assembly -query '[nom_espèce][Organism] AND latest_refseq[filter]' | efetch -format docsum | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F'/' '{print \$0\"/\"\$NF\"_genomic.fna.gz\"}' | sed 's|ftp://|https://|' | xargs -n 1 wget -P [nom_espèce]_genomes/ && conda deactivate"
 ```
 
 3. **Compter le nombre de génomes téléchargés**
@@ -270,7 +270,7 @@ esearch -db assembly -query "[nom_classe][Organism] AND latest_refseq[filter] NO
 ```
 **Ou envoyer cette commande sur un cluster de calcul SGE**
 ```
-qsub -cwd -V -N DL_[nom_classe] -o qlogs.DL_[nom_classe] -e qlogs.DL_[nom_classe] -pe thread 20 -b y "conda activate entrez-direct-15.6 && esearch -db assembly -query '[nom_classe][Organism] AND latest_refseq[filter] NOT [nom_espèce][Organism]' | efetch -format docsum | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F'/' '{print \$0\"/\"\$NF\"_genomic.fna.gz\"}' | sed 's|ftp://|https://|' | xargs -n 1 wget -P [nom_classe]_genomes/ && conda deactivate"
+qsub -cwd -V -N DL_[nom_classe] -o logs/qlogs.DL_[nom_classe] -e logs/qlogs.DL_[nom_classe] -pe thread 20 -b y "conda activate entrez-direct-15.6 && esearch -db assembly -query '[nom_classe][Organism] AND latest_refseq[filter] NOT [nom_espèce][Organism]' | efetch -format docsum | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F'/' '{print \$0\"/\"\$NF\"_genomic.fna.gz\"}' | sed 's|ftp://|https://|' | xargs -n 1 wget -P [nom_classe]_genomes/ && conda deactivate"
 ```
 
 6. **Vérifier que tous les fichiers FASTA ont bien été téléchargés**
@@ -291,7 +291,7 @@ rm -rf [nom_classe]_genomes/[fichier1].fna.gz [nom_classe]_genomes/[fichier2].fn
 
 9. **Décompresser temporairement tous les fichiers FASTA du répertoire de classe et les concaténer dans un seul et même fichier multifasta non compressé**
 ```
-qsub -cwd -V -N Concat.FASTA -o qlogs.Concat.FASTA -e qlogs.Concat.FASTA -pe thread 30 -b y "for file in [nom_classe]_genomes/*.fna.gz; do gunzip -c \$file >> db/[nom_classe]_genomes.fna; done"
+qsub -cwd -V -N Concat.FASTA -o logs/qlogs.Concat.FASTA -e logs/qlogs.Concat.FASTA -pe thread 30 -b y "for file in [nom_classe]_genomes/*.fna.gz; do gunzip -c \$file >> db/[nom_classe]_genomes.fna; done"
 ```
 
 10. **Compter le nombre de contigs dans le fichier multifasta**
@@ -301,7 +301,7 @@ rg -c ">" db/[nom_classe]_genomes.fna
 
 11. **Compresser le répertoire contenant les génomes de la classe bactérienne pour économiser de l'espace disque et le supprimer**
 ```
-qsub -cwd -V -N CompressDirs -o qlogs.TAR -e qlogs.TAR -pe thread 15 -b y "tar -czvf [nom_classe]_genomes.tar.gz [nom_classe]_genomes/ && rm -rf [nom_classe]_genomes/"
+qsub -cwd -V -N CompressDirs -o logs/qlogs.TAR -e logs/qlogs.TAR -pe thread 15 -b y "tar -czvf [nom_classe]_genomes.tar.gz [nom_classe]_genomes/ && rm -rf [nom_classe]_genomes/"
 ```
 
 ### Alternative 
@@ -319,7 +319,7 @@ gzip -d [nom_espèce]_genomes/*.fna.gz
 ```
 **Ou envoyer cette commande sur un cluster de calcul SGE**
 ```
-qsub -cwd -V -N DZIP.FASTA -o qlogs.DZIP.FASTA -e qlogs.DZIP.FASTA -pe thread 20 -b y "for file in [nom_espèce]_genomes/*.fna.gz; do gunzip -c \$file > \${file%.gz}; done"
+qsub -cwd -V -N DZIP.FASTA -o logs/qlogs.DZIP.FASTA -e logs/qlogs.DZIP.FASTA -pe thread 20 -b y "for file in [nom_espèce]_genomes/*.fna.gz; do gunzip -c \$file > \${file%.gz}; done"
 ```
 
 2. **Annoter les génomes de l'espèce d'intérêt avec Prokka afin d'obtenir des fichiers GFF3 pour chaque génome**
@@ -328,7 +328,7 @@ prokka --outdir [nom_espèce]_annotations/[nom_espèce] --prefix [nom_espèce] -
 ```
 **Ou envoyer cette commande sur un cluster de calcul SGE**
 ```
-for fna in [nom_espèce]_genomes/*.fna; do qsub -cwd -V -N Prokka_$(basename $fna .fna) -o qlogs.Prokka_$(basename $fna .fna) -e qlogs.Prokka_$(basename $fna .fna) -pe thread 20 -b y "conda activate prokka-1.14.6 && prokka --outdir [nom_espèce]_annotations/$(basename $fna .fna) --prefix $(basename $fna .fna) --genus [genre] --species [espèce] --kingdom Bacteria --gcode 11 --cpus 20 $fna && conda deactivate"; done
+for fna in [nom_espèce]_genomes/*.fna; do qsub -cwd -V -N Prokka_$(basename $fna .fna) -o logs/qlogs.Prokka_$(basename $fna .fna) -e logs/qlogs.Prokka_$(basename $fna .fna) -pe thread 20 -b y "conda activate prokka-1.14.6 && prokka --outdir [nom_espèce]_annotations/$(basename $fna .fna) --prefix $(basename $fna .fna) --genus [genre] --species [espèce] --kingdom Bacteria --gcode 11 --cpus 20 $fna && conda deactivate"; done
 ```
 
 3. **Activer l'environnement conda contenant l'outil Roary pour l'analyse du "core genome"**
@@ -342,7 +342,7 @@ roary -p 20 -f [nom_espèce]_Roary -e --mafft -n -v -cd 95 [nom_espèce]_annotat
 ```
 **Ou envoyer cette commande sur un cluster de calcul SGE**
 ```
-qsub -cwd -V -N Roary_[nom_espèce] -o qlogs.Roary_[nom_espèce] -e qlogs.Roary_[nom_espèce] -pe thread 40 -b y "conda activate roary-3.13.0 && roary -p 40 -f [nom_espèce]_Roary -e --mafft -n -v -cd 95 [nom_espèce]_annotations/*/*.gff && conda deactivate"
+qsub -cwd -V -N Roary_[nom_espèce] -o logs/qlogs.Roary_[nom_espèce] -e logs/qlogs.Roary_[nom_espèce] -pe thread 40 -b y "conda activate roary-3.13.0 && roary -p 40 -f [nom_espèce]_Roary -e --mafft -n -v -cd 95 [nom_espèce]_annotations/*/*.gff && conda deactivate"
 ```
 
 5. **Générer un arbre phylogénétique à partir de l'alignement des gènes du core genome**
@@ -351,7 +351,7 @@ FastTree -nt -gtr [nom_espèce]_Roary/core_gene_alignment.aln > [nom_espèce]_Ro
 ```
 **Ou envoyer cette commande sur un cluster de calcul SGE**
 ```
-qsub -cwd -V -N FastTree_[nom_espèce] -o qlogs.FastTree_[nom_espèce] -e qlogs.FastTree_[nom_espèce] -pe thread 20 -b y "conda activate roary-3.13.0 && FastTree -nt -gtr [nom_espèce]_Roary/core_gene_alignment.aln > [nom_espèce]_Roary/core_gene_alignment.newick && conda deactivate"
+qsub -cwd -V -N FastTree_[nom_espèce] -o logs/qlogs.FastTree_[nom_espèce] -e logs/qlogs.FastTree_[nom_espèce] -pe thread 20 -b y "conda activate roary-3.13.0 && FastTree -nt -gtr [nom_espèce]_Roary/core_gene_alignment.aln > [nom_espèce]_Roary/core_gene_alignment.newick && conda deactivate"
 ```
 
 6. **Générer les graphiques de Roary pour visualiser les résultats**
@@ -397,7 +397,7 @@ blastn -db db/[nom_classe]_genomes -query db/[nom_espèce]_core_genome.fa -out d
 ```
 **Ou envoyer cette commande sur un cluster de calcul SGE**
 ```
-qsub -cwd -V -N Blast_[nom_espèce]_cg -o qlogs.Blast_[nom_espèce]_cg -e qlogs.Blast_[nom_espèce]_cg -pe thread 20 -b y "conda activate blast-2.13.0 && blastn -db db/[nom_classe]_genomes -query db/[nom_espèce]_core_genome.fa -out db/matching_[nom_espèce]_core_genome.txt -outfmt 2 && conda deactivate"
+qsub -cwd -V -N Blast_[nom_espèce]_cg -o logs/qlogs.Blast_[nom_espèce]_cg -e logs/qlogs.Blast_[nom_espèce]_cg -pe thread 20 -b y "conda activate blast-2.13.0 && blastn -db db/[nom_classe]_genomes -query db/[nom_espèce]_core_genome.fa -out db/matching_[nom_espèce]_core_genome.txt -outfmt 2 && conda deactivate"
 ```
 
 ## Étape 7 : Extraction et Analyse des Séquences Uniques pour l'Échelle de l'Espèce
