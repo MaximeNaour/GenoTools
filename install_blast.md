@@ -62,6 +62,7 @@ source ~/.bashrc
 ```
 Téléchargement des bases de données  
 Utilisez le script update_blastdb.pl ($HOME/tools/ncbi-blast-2.15.0+/bin) pour télécharger les bases de données préformatées depuis NCBI
-
-perl $HOME/ncbi-blast-2.10.1+/bin/update_blastdb.pl --passive --decompress 16S_ribosomal_RNA
+```
+perl $HOME/tools/ncbi-blast-2.15.0+/bin/update_blastdb.pl --passive --decompress 16S_ribosomal_RNA
+```
 Cette commande téléchargera et décompressera la base de données 16S_ribosomal_RNA dans le répertoire blastdb.
