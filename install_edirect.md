@@ -93,7 +93,7 @@ Nous constatons bien que l'outil "EDIRECT" a bien été installé dans le dossie
 
 ### Étape 5 : Vérifier l'installation
 
-Activer l'environnement "Entrez-Direct"  
+Activer l'environnement conda "Entrez-Direct"  
 ```
 conda activate edirect
 ```
