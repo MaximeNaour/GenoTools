@@ -60,7 +60,7 @@ echo 'export BLASTDB=$HOME/blastdb' >> ~/.bashrc
 source ~/.bashrc
 ```
 ##### Téléchargement des bases de données  
-##### Utilisez le script update_blastdb.pl ($HOME/tools/ncbi-blast-2.15.0+/bin) pour télécharger les bases de données préformatées depuis NCBI  
+Utilisez le script update_blastdb.pl ($HOME/tools/ncbi-blast-2.15.0+/bin) pour télécharger les bases de données préformatées depuis NCBI  
 ##### Lister les bases de données BLAST disponible (veuillez attendre plusieurs secondes...)  
 ```
 update_blastdb.pl --showall [*]
