@@ -93,8 +93,12 @@ Nous constatons bien que l'outil "EDIRECT" a bien été installé dans le dossie
 
 ### Étape 5 : Vérifier l'installation
 
-Pour vérifier que l'outil "EDIRECT" a été correctement installé, exécutez la commande suivante :
+Activer l'environnement "Entrez-Direct"  
+```
+conda activate edirect
+```
 
+Pour vérifier que l'outil "EDIRECT" a été correctement installé, exécutez la commande suivante :  
 ```
 esearch -version
 ```
